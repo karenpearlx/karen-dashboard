@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Karen — Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,700;1,9..144,400&family=JetBrains+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0b0d12;
+  --bg-2:#11141b;
+  --bg-3:#161a23;
+  --line:#1f2430;
+  --line-2:#2a3142;
+  --ink:#e8e4dc;
+  --ink-dim:#9aa0ad;
+  --ink-mute:#5c6273;
+  --teal:#5fd4b4;
+  --teal-dim:#2f8a73;
+  --ember:#ff7a45;
+  --plum:#9b6cff;
+  --rose:#e87a8e;
+  --serif:'Fraunces',serif;
+  --sans:'DM Sans',sans-serif;
+  --mono:'JetBrains Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+body{
+  min-height:100vh;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 20% 0%, rgba(155,108,255,0.08), transparent 60%),
+    radial-gradient(ellipse 70% 50% at 90% 10%, rgba(95,212,180,0.06), transparent 60%),
+    linear-gradient(180deg, var(--bg) 0%, var(--bg) 100%);
+  background-attachment:fixed;
+}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+input,textarea,select{font:inherit;color:var(--ink);background:var(--bg-3);border:1px solid var(--line);padding:8px 12px;border-radius:6px;outline:none;width:100%}
+input:focus,textarea:focus,select:focus{border-color:var(--teal-dim)}
+textarea{resize:vertical;min-height:80px;font-family:var(--sans)}
+
+/* layout */
+.app{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
+aside{
+  border-right:1px solid var(--line);
+  padding:32px 20px;
+  position:sticky;top:0;height:100vh;
+  background:rgba(11,13,18,0.6);
+  backdrop-filter:blur(10px);
+}
+.brand{font-family:var(--serif);font-weight:300;font-style:italic;font-size:1.8rem;letter-spacing:-0.02em;margin-bottom:4px}
+.brand span{color:var(--teal);font-style:normal}
+.tag{font-family:var(--mono);font-size:0.7rem;color:var(--ink-mute);text-transform:uppercase;letter-spacing:0.2em;margin-bottom:36px}
+nav{display:flex;flex-direction:column;gap:2px}
+nav button{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 12px;border-radius:6px;
+  color:var(--ink-dim);font-size:0.92rem;font-weight:500;
+  text-align:left;transition:all 0.2s;
+}
+nav button:hover{background:var(--bg-3);color:var(--ink)}
+nav button.active{background:var(--bg-3);color:var(--teal)}
+nav button .dot{width:5px;height:5px;border-radius:50%;background:currentColor;opacity:0.6}
+
+main{padding:48px 56px;max-width:1100px}
+.section{display:none;animation:fade 0.4s ease}
+.section.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+.eyebrow{font-family:var(--mono);font-size:0.7rem;color:var(--teal);letter-spacing:0.25em;text-transform:uppercase;margin-bottom:8px}
+h1.title{font-family:var(--serif);font-weight:300;font-size:3rem;letter-spacing:-0.03em;line-height:1.05;margin-bottom:8px}
+h1.title em{font-style:italic;color:var(--ember)}
+.sub{color:var(--ink-dim);margin-bottom:40px;max-width:600px}
+
+h2{font-family:var(--serif);font-weight:500;font-size:1.4rem;margin-bottom:16px;letter-spacing:-0.01em}
+h3{font-family:var(--sans);font-weight:600;font-size:0.95rem;color:var(--ink);margin-bottom:8px}
+
+/* cards */
+.grid{display:grid;gap:20px}
+.grid-2{grid-template-columns:repeat(2,1fr)}
+.grid-3{grid-template-columns:repeat(3,1fr)}
+.grid-4{grid-template-columns:repeat(4,1fr)}
+.card{
+  background:var(--bg-2);
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:24px;
+  transition:border-color 0.2s;
+}
+.card:hover{border-color:var(--line-2)}
+.card .label{font-family:var(--mono);font-size:0.65rem;text-transform:uppercase;letter-spacing:0.2em;color:var(--ink-mute);margin-bottom:8px}
+.card .big{font-family:var(--serif);font-weight:300;font-size:2.2rem;letter-spacing:-0.02em;line-height:1}
+.card .big.teal{color:var(--teal)}
+.card .big.ember{color:var(--ember)}
+.card .note{color:var(--ink-dim);font-size:0.85rem;margin-top:6px}
+
+/* finances */
+.expenses-list{display:flex;flex-direction:column;gap:0}
+.expense-row{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--line);font-size:0.93rem}
+.expense-row:last-child{border-bottom:none}
+.expense-row .amt{font-family:var(--mono);color:var(--ink-dim)}
+.expense-row .amt.bold{color:var(--teal);font-weight:500}
+
+.bar{height:6px;background:var(--bg-3);border-radius:3px;overflow:hidden;margin-top:10px}
+.bar-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--teal-dim));border-radius:3px;transition:width 0.6s ease}
+
+/* books */
+.book{display:flex;gap:14px;padding:14px;background:var(--bg-3);border-radius:8px;border:1px solid var(--line);margin-bottom:8px}
+.book .cover{width:40px;height:60px;background:linear-gradient(135deg,var(--plum),var(--rose));border-radius:3px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-style:italic;color:rgba(255,255,255,0.7);font-size:1.2rem}
+.book .info{flex:1}
+.book .info .t{font-family:var(--serif);font-size:1.05rem;font-weight:500;letter-spacing:-0.01em}
+.book .info .a{color:var(--ink-dim);font-size:0.85rem}
+.book .info .s{font-family:var(--mono);font-size:0.65rem;color:var(--ink-mute);letter-spacing:0.15em;text-transform:uppercase;margin-top:4px}
+
+/* habits */
+.habit{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid var(--line)}
+.habit:last-child{border:none}
+.habit-name{font-weight:500}
+.habit-streak{font-family:var(--mono);font-size:0.85rem;color:var(--ember)}
+.dots{display:flex;gap:4px;margin-top:4px}
+.dots span{width:14px;height:14px;border-radius:3px;background:var(--bg-3);border:1px solid var(--line)}
+.dots span.on{background:var(--teal);border-color:var(--teal)}
+
+/* journal */
+.entry{padding:20px;background:var(--bg-2);border:1px solid var(--line);border-radius:10px;margin-bottom:14px;border-left:3px solid var(--plum)}
+.entry .date{font-family:var(--mono);font-size:0.7rem;color:var(--ink-mute);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:8px}
+.entry .body{color:var(--ink);line-height:1.6;white-space:pre-wrap}
+
+/* work log */
+.work-entry{padding:20px;background:var(--bg-2);border:1px solid var(--line);border-radius:10px;margin-bottom:14px;border-left:3px solid var(--ember)}
+.work-entry .date{font-family:var(--mono);font-size:0.7rem;color:var(--ink-mute);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:8px}
+.work-entry .body{color:var(--ink);line-height:1.6;white-space:pre-wrap}
+
+/* goals */
+.goal{padding:20px;background:var(--bg-2);border:1px solid var(--line);border-radius:10px;margin-bottom:14px}
+.goal .top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+.goal .name{font-family:var(--serif);font-size:1.15rem;font-weight:500}
+.goal .pct{font-family:var(--mono);color:var(--teal);font-size:0.9rem}
+.goal .desc{color:var(--ink-dim);font-size:0.85rem;margin-bottom:12px}
+
+/* dandan */
+.milestone{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--line)}
+.milestone:last-child{border:none}
+.milestone .when{font-family:var(--mono);font-size:0.75rem;color:var(--ember);width:90px;flex-shrink:0;padding-top:2px;letter-spacing:0.1em}
+.milestone .what{color:var(--ink)}
+
+/* footer note */
+.footer-note{margin-top:60px;padding-top:24px;border-top:1px solid var(--line);font-family:var(--mono);font-size:0.7rem;color:var(--ink-mute);letter-spacing:0.15em;text-transform:uppercase}
+.footer-note span{color:var(--teal)}
+
+/* tag chips */
+.chip{display:inline-block;padding:3px 10px;font-family:var(--mono);font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;border-radius:99px;border:1px solid var(--line-2);color:var(--ink-dim);margin-right:6px}
+.chip.teal{color:var(--teal);border-color:var(--teal-dim)}
+.chip.ember{color:var(--ember);border-color:#7a4530}
+
+/* job tracker */
+.job-status{
+  font-family:var(--mono);font-size:0.75rem;
+  padding:4px 10px;border-radius:4px;
+  background:var(--bg-3);border:1px solid var(--line);
+  cursor:pointer;min-width:100px;
+}
+.job-status:focus{border-color:var(--teal-dim)}
+.job-status option{background:var(--bg-2);color:var(--ink)}
+.job-item{padding:16px 0;border-bottom:1px solid var(--line)}
+.job-item:last-child{border-bottom:none}
+.job-title{font-weight:600;font-size:1rem;margin-bottom:4px}
+.job-meta{color:var(--ink-dim);font-size:0.85rem;margin-bottom:8px}
+.job-desc{color:var(--ink-mute);font-size:0.8rem;line-height:1.5;margin-bottom:10px}
+.job-links{font-family:var(--mono);font-size:0.75rem}
+.job-links a{transition:color 0.2s}
+.job-links a:hover{color:var(--ink)}
+.status-notyet{color:var(--ink-mute)}
+.status-applied{color:var(--teal)}
+.status-interview{color:var(--plum)}
+.status-rejected{color:var(--rose)}
+.status-skip{color:var(--ink-mute);opacity:0.5}
+
+/* collapsible sections */
+.collapsible{margin-bottom:16px}
+.collapsible-header{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:14px 18px;background:var(--bg-2);border:1px solid var(--line);
+  border-radius:10px;cursor:pointer;transition:all 0.2s;
+}
+.collapsible-header:hover{border-color:var(--line-2)}
+.collapsible-header h3{margin:0;font-size:0.95rem}
+.collapsible-header .count{font-family:var(--mono);font-size:0.75rem;color:var(--ink-mute)}
+.collapsible-header .toggle{
+  font-size:1.2rem;color:var(--ink-mute);transition:transform 0.2s;
+}
+.collapsible.open .toggle{transform:rotate(180deg)}
+.collapsible-body{
+  display:none;padding:16px 18px;
+  background:var(--bg-2);border:1px solid var(--line);border-top:none;
+  border-radius:0 0 10px 10px;margin-top:-10px;padding-top:24px;
+}
+.collapsible.open .collapsible-header{border-radius:10px 10px 0 0}
+.collapsible.open .collapsible-body{display:block}
+
+@media (max-width:820px){
+  .app{grid-template-columns:1fr}
+  aside{position:relative;height:auto;border-right:none;border-bottom:1px solid var(--line);padding:20px}
+  nav{flex-direction:row;flex-wrap:wrap;gap:4px}
+  nav button{flex:0 0 auto;padding:8px 12px;font-size:0.85rem}
+  main{padding:28px 20px}
+  h1.title{font-size:2.2rem}
+  .grid-3,.grid-4{grid-template-columns:1fr 1fr}
+  .grid-2{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<aside>
+  <div class="brand">karen<span>.</span></div>
+  <div class="tag">a quiet ledger</div>
+  <nav>
+    <button class="nav-btn active" data-tab="overview"><span class="dot"></span>Overview</button>
+    <button class="nav-btn" data-tab="finances"><span class="dot"></span>Finances</button>
+    <button class="nav-btn" data-tab="dandan"><span class="dot"></span>Dandan</button>
+    <button class="nav-btn" data-tab="books"><span class="dot"></span>Books</button>
+    <button class="nav-btn" data-tab="habits"><span class="dot"></span>Habits</button>
+    <button class="nav-btn" data-tab="work"><span class="dot"></span>Work</button>
+    <button class="nav-btn" data-tab="journal"><span class="dot"></span>Journal</button>
+    <button class="nav-btn" data-tab="goals"><span class="dot"></span>Goals</button>
+    <button class="nav-btn" data-tab="travel"><span class="dot"></span>Travel</button>
+    <button class="nav-btn" data-tab="poems"><span class="dot"></span>Poems</button>
+  </nav>
+</aside>
+
+<main>
+
+<!-- OVERVIEW -->
+<section class="section active" id="overview">
+  <div class="eyebrow">June 19, 2026 · Friday</div>
+  <h1 class="title">good evening, <em>karen</em>.</h1>
+  <p class="sub">a small, private corner for the things you carry. updated by kat as you go.</p>
+
+  <div class="grid grid-3" style="margin-bottom:32px">
+    <div class="card"><div class="label">Monthly free</div><div class="big teal">₱28,589</div><div class="note">after fixed expenses</div></div>
+    <div class="card"><div class="label">Books read</div><div class="big">300<em style="font-style:italic;color:var(--ember)">+</em></div><div class="note">since 2012</div></div>
+    <div class="card"><div class="label">Next salon</div><div class="big ember" style="font-size:1.5rem">Jul 25</div><div class="note">hair botox refresh</div></div>
+  </div>
+
+  <h2>this week</h2>
+  <div class="grid grid-2">
+    <div class="card">
+      <h3>upcoming</h3>
+      <div class="milestone"><div class="when">JUL 24</div><div class="what">Hair salon appointment, 7pm</div></div>
+      <div class="milestone"><div class="when">JUL 28</div><div class="what">Ravenous (Kresley Cole) drops</div></div>
+      <div class="milestone"><div class="when">APR 27</div><div class="what">Shopee loan finally paid off</div></div>
+    </div>
+    <div class="card">
+      <h3>a small reminder</h3>
+      <p style="font-family:var(--serif);font-style:italic;font-size:1.05rem;color:var(--ink-dim);line-height:1.5;margin-top:6px">"you can't date potential or feelings. you date actions."</p>
+      <p style="margin-top:14px;font-size:0.85rem;color:var(--ink-mute)">rest is not danger. you are allowed to put it down for a minute.</p>
+    </div>
+  </div>
+
+  <h2 style="margin-top:40px">what's live</h2>
+  <div class="grid grid-2">
+    <div class="card" style="border-left:3px solid var(--plum)">
+      <div class="label" style="font-family:var(--mono);font-size:0.65rem;text-transform:uppercase;letter-spacing:0.2em;color:var(--plum);margin-bottom:8px">new · jun 2026</div>
+      <h3 style="font-family:var(--serif);font-weight:500;font-size:1.25rem">The Book Vault PH</h3>
+      <p class="note" style="margin-top:6px">online bookstore. cozy noir aesthetic, brown pom mascot, 60+ titles loading in.</p>
+      <p style="margin-top:10px;font-family:var(--mono);font-size:0.75rem"><a href="https://feelingly-curtly-just-takin.kitten.space" target="_blank" style="color:var(--teal)">→ shop</a> <span style="color:var(--ink-mute)">·</span> <a href="https://feelingly-curtly-just-takin.kitten.space/admin.html" target="_blank" style="color:var(--ink-mute)">admin</a> <span style="color:var(--ink-mute)">·</span> <a href="https://instagram.com/thebookvaultph" target="_blank" style="color:var(--ink-mute)">@thebookvaultph</a></p>
+    </div>
+    <div class="card">
+      <div class="label">Ops Dashboard</div>
+      <h3 style="font-family:var(--serif);font-weight:500;font-size:1.25rem">OGTool internal</h3>
+      <p class="note" style="margin-top:6px">reddit, blogs, and SEO tracking. running clean.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FINANCES -->
+<section class="section" id="finances">
+  <div class="eyebrow">numbers</div>
+  <h1 class="title">the <em>ledger</em>.</h1>
+  <p class="sub">what comes in, what goes out, what stays.</p>
+
+  <div class="grid grid-4" style="margin-bottom:32px">
+    <div class="card"><div class="label">Income</div><div class="big teal">₱90,000</div><div class="note">monthly · OGTool</div></div>
+    <div class="card"><div class="label">Fixed expenses</div><div class="big">₱61,411</div></div>
+    <div class="card"><div class="label">Free cash</div><div class="big ember">₱28,589</div></div>
+    <div class="card"><div class="label">After Jul 2026</div><div class="big ember">₱30,589</div><div class="note">Shopee paid off</div></div>
+  </div>
+
+  <div class="grid grid-2">
+    <div class="card">
+      <h2>fixed expenses</h2>
+      <div class="expenses-list">
+        <div class="expense-row"><span>Car loan (BPI, 7th)</span><span class="amt bold">₱20,122</span></div>
+        <div class="expense-row"><span>Electric bill</span><span class="amt">₱6,000</span></div>
+        <div class="expense-row"><span>Mom's allowance</span><span class="amt">₱5,000</span></div>
+        <div class="expense-row"><span>Food allowance</span><span class="amt">₱4,500</span></div>
+        <div class="expense-row"><span>Dandan's milk</span><span class="amt">₱3,200</span></div>
+        <div class="expense-row"><span>Gas</span><span class="amt">₱3,000</span></div>
+        <div class="expense-row"><span>Kazie's allowance</span><span class="amt">₱2,500</span></div>
+        <div class="expense-row"><span>TV payment (ends Apr 2027)</span><span class="amt">₱2,592</span></div>
+        <div class="expense-row"><span>Grocery</span><span class="amt">₱2,000</span></div>
+        <div class="expense-row"><span>Dandan's tuition</span><span class="amt">₱2,000</span></div>
+        <div class="expense-row"><span>Shopee loan (ends Jul 2026)</span><span class="amt">₱2,000</span></div>
+        <div class="expense-row"><span>Converge internet</span><span class="amt">₱1,647</span></div>
+        <div class="expense-row"><span>Events buffer</span><span class="amt">₱1,500</span></div>
+        <div class="expense-row"><span>Dandan extras</span><span class="amt">₱500</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>account split</h2>
+      <div style="margin-bottom:18px">
+        <div style="display:flex;justify-content:space-between"><strong>BPI</strong><span class="amt" style="font-family:var(--mono);color:var(--ink-dim)">auto-debit + savings</span></div>
+        <div class="note">car loan auto-debit + long-term savings</div>
+      </div>
+      <div style="margin-bottom:18px">
+        <div style="display:flex;justify-content:space-between"><strong>GoTyme</strong><span class="amt" style="font-family:var(--mono);color:var(--ink-dim)">daily</span></div>
+        <div class="note">daily spending, food, gas, groceries</div>
+      </div>
+      <div style="margin-bottom:24px">
+        <div style="display:flex;justify-content:space-between"><strong>Maribank</strong><span class="amt" style="font-family:var(--mono);color:var(--teal)">untouchable</span></div>
+        <div class="note">savings only, no withdrawals</div>
+      </div>
+
+      <h3>renovation savings goal</h3>
+      <p class="note">₱219k - ₱489k for 2nd floor extension</p>
+      <div class="bar"><div class="bar-fill" style="width:8%"></div></div>
+      <div style="display:flex;justify-content:space-between;margin-top:6px;font-family:var(--mono);font-size:0.75rem;color:var(--ink-mute)"><span>~₱18,000 saved</span><span>~₱219,000 goal</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- DANDAN -->
+<section class="section" id="dandan">
+  <div class="eyebrow">small human</div>
+  <h1 class="title">all about <em>dandan</em>.</h1>
+  <p class="sub">born october 10, 2020 · 5 years old · the bravest little person.</p>
+
+  <div class="grid grid-3" style="margin-bottom:32px">
+    <div class="card"><div class="label">Age</div><div class="big">5<em style="font-style:italic;color:var(--ember);font-size:1.2rem">.6</em></div><div class="note">turns 6 in Oct</div></div>
+    <div class="card"><div class="label">Tuition</div><div class="big teal" style="font-size:1.6rem">₱2,000<span style="font-size:0.9rem;color:var(--ink-mute)">/mo</span></div></div>
+    <div class="card"><div class="label">Milk budget</div><div class="big" style="font-size:1.6rem">₱3,200<span style="font-size:0.9rem;color:var(--ink-mute)">/mo</span></div></div>
+  </div>
+
+  <div class="grid grid-2">
+    <div class="card">
+      <h2>milestones &amp; notes</h2>
+      <div class="milestone"><div class="when">2020·OCT</div><div class="what">Born. The one who stayed.</div></div>
+      <div class="milestone"><div class="when">2025</div><div class="what">Started preschool</div></div>
+      <div class="milestone"><div class="when">2026·MAY</div><div class="what">Developmentally on track. Curious, affectionate, already knows what privacy means.</div></div>
+      <div class="milestone"><div class="when">2026·OCT</div><div class="what">Turns 6 — pre-K transition coming up</div></div>
+    </div>
+    <div class="card">
+      <h2>care notes</h2>
+      <p style="color:var(--ink-dim);line-height:1.7">lives with mom (lola) who helps with him while karen works US hours. attached, trusting, comfortable being himself around her. <br><br>watch for: typical 5yo big-feelings episodes, sleep regressions around school transitions, dental check overdue?</p>
+      <div style="margin-top:16px"><span class="chip teal">healthy</span><span class="chip">curious</span><span class="chip ember">attached</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- BOOKS -->
+<section class="section" id="books">
+  <div class="eyebrow">300+ and counting</div>
+  <h1 class="title">the <em>library</em>.</h1>
+  <p class="sub">gothic horror, psychological thrillers, the kind of books read after midnight.</p>
+
+  <div class="grid grid-3">
+    <div>
+      <h2>currently reading</h2>
+      <div class="book"><div class="cover">V</div><div class="info"><div class="t">Vanishing Girls</div><div class="a">Lisa Regan</div><div class="s">Josie Quinn · #1 of 24</div></div></div>
+    </div>
+    <div>
+      <h2>want to read</h2>
+      <div class="book"><div class="cover">R</div><div class="info"><div class="t">Ravenous</div><div class="a">Kresley Cole</div><div class="s">Jul 28, 2026 · pre-order</div></div></div>
+      <div class="book"><div class="cover">S</div><div class="info"><div class="t">Shadow's Heart</div><div class="a">Kresley Cole</div><div class="s">2025 release</div></div></div>
+    </div>
+    <div>
+      <h2>favorite authors</h2>
+      <div style="display:flex;flex-direction:column;gap:8px;font-family:var(--serif);font-size:1.05rem;font-style:italic;color:var(--ink-dim)">
+        <span>Wendy Webb<span style="font-style:normal;font-family:var(--mono);font-size:0.7rem;color:var(--ink-mute);margin-left:8px">QUEEN OF NORTHERN GOTHIC</span></span>
+        <span>Ania Ahlborn</span>
+        <span>Freida McFadden</span>
+        <span>Riley Sager</span>
+        <span>Simone St. James</span>
+        <span>Kresley Cole</span>
+      </div>
+    </div>
+  </div>
+
+  <h2 style="margin-top:40px">recent favorites</h2>
+  <div class="grid grid-2">
+    <div class="card">
+      <h3 style="font-family:var(--serif);font-weight:500;font-size:1.1rem">Daughters of the Lake</h3>
+      <p class="note">Wendy Webb · "the one I keep recommending"</p>
+    </div>
+    <div class="card">
+      <h3 style="font-family:var(--serif);font-weight:500;font-size:1.1rem">The Brothers</h3>
+      <p class="note">Ania Ahlborn · "the one that actually scared me"</p>
+    </div>
+  </div>
+</section>
+
+<!-- HABITS -->
+<section class="section" id="habits">
+  <div class="eyebrow">small repeats</div>
+  <h1 class="title">the <em>habits</em>.</h1>
+  <p class="sub">tiny daily things. don't make it harder than it needs to be.</p>
+
+  <div class="card">
+    <div id="habits-list">
+      <div class="habit">
+        <div><div class="habit-name">read 20 mins</div><div class="dots"><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span></span><span class="on"></span><span class="on"></span></div></div>
+        <div class="habit-streak">🔥 6d</div>
+      </div>
+      <div class="habit">
+        <div><div class="habit-name">tarot pull (1 card)</div><div class="dots"><span class="on"></span><span></span><span class="on"></span><span class="on"></span><span></span><span class="on"></span><span class="on"></span></div></div>
+        <div class="habit-streak">🔥 2d</div>
+      </div>
+      <div class="habit">
+        <div><div class="habit-name">walk / move 15 mins</div><div class="dots"><span></span><span class="on"></span><span></span><span class="on"></span><span></span><span></span><span class="on"></span></div></div>
+        <div class="habit-streak">🔥 1d</div>
+      </div>
+      <div class="habit">
+        <div><div class="habit-name">no doomscroll before bed</div><div class="dots"><span></span><span></span><span class="on"></span><span></span><span></span><span class="on"></span><span></span></div></div>
+        <div class="habit-streak">0d</div>
+      </div>
+      <div class="habit">
+        <div><div class="habit-name">water (8 glasses)</div><div class="dots"><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span></div></div>
+        <div class="habit-streak">🔥 14d</div>
+      </div>
+    </div>
+    <p class="note" style="margin-top:14px;font-family:var(--mono);font-size:0.7rem;color:var(--ink-mute);letter-spacing:0.15em;text-transform:uppercase">last 7 days · tell kat to mark today</p>
+  </div>
+</section>
+
+<!-- WORK -->
+<section class="section" id="work">
+  <div class="eyebrow" style="color:var(--ember)">the grind</div>
+  <h1 class="title">the <em>work log</em>.</h1>
+  <p class="sub">applications, campaigns, the slow build. wins and grinds, no gloss.</p>
+
+  <h2 style="margin-bottom:16px">job tracker <span style="font-family:var(--mono);font-size:0.7rem;color:var(--ink-mute);font-weight:400;margin-left:8px">21 apply points left</span></h2>
+
+  <!-- EXTERNAL APPS -->
+  <div class="collapsible open" id="col-external">
+    <div class="collapsible-header" onclick="toggleCollapsible('col-external')">
+      <h3 style="color:var(--teal)">✓ External Apps <span class="count">(3 jobs · no points needed)</span></h3>
+      <span class="toggle">▼</span>
+    </div>
+    <div class="collapsible-body">
+      <div class="job-item" data-job="ext1">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+          <div class="job-title">Remote Operations Manager & Business Integrator</div>
+          <select class="job-status" data-job="ext1"><option value="notyet">not yet</option><option value="applied">applied</option><option value="interview">interview</option><option value="rejected">rejected</option><option value="skip">don't like</option></select>
+        </div>
+        <div class="job-meta">$1,500-2,000/mo + bonuses</div>
+        <div class="job-desc">EOS/Integrator role. Own operations, build systems, run business day-to-day.</div>
+        <div class="job-links"><a href="https://docs.google.com/forms/d/e/1FAIpQLSckzNwNQtfFykaxNF3Xe-kURYGVEWEOj0mQMhKWdIxR__d5uQ/viewform" target="_blank" style="color:var(--teal)">→ Google Form</a> <span style="color:var(--ink-mute)">|</span> <a href="https://www.onlinejobs.ph/jobseekers/job/Remote-Operations-Manager-Business-Integrator-EOS-Systems-Focused-1664532" target="_blank" style="color:var(--ink-mute)">OLJ</a></div>
+      </div>
+      <div class="job-item" data-job="ext2">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+          <div class="job-title">Operations Manager at One Janitorial</div>
+          <select class="job-status" data-job="ext2"><option value="notyet">not yet</option><option value="applied">applied</option><option value="interview">interview</option><option value="rejected">rejected</option><option value="skip">don't like</option></select>
+        </div>
+        <div class="job-meta">CAD $2,500/mo · requires 3 min video</div>
+        <div class="job-desc">Janitorial services company. Must use external HubSpot form.</div>
+        <div class="job-links"><a href="https://5m2ng.share.hsforms.com/2JbQPoKDHTz6UHkr45HP9wg" target="_blank" style="color:var(--teal)">→ HubSpot Form</a> <span style="color:var(--ink-mute)">|</span> <a href="https://www.onlinejobs.ph/jobseekers/job/Operations-Manager-1471947" target="_blank" style="color:var(--ink-mute)">OLJ</a></div>
+      </div>
+      <div class="job-item" data-job="ext3">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+          <div class="job-title">E-commerce Operations Lead at Ikigai Cases</div>
+          <select class="job-status" data-job="ext3"><option value="notyet">not yet</option><option value="applied">applied</option><option value="interview">interview</option><option value="rejected">rejected</option><option value="skip">don't like</option></select>
+        </div>
+        <div class="job-meta">$1,800/mo + bonuses</div>
+        <div class="job-desc">E-commerce phone cases brand. External careers page.</div>
+        <div class="job-links"><a href="https://ikigai-cases-2.careers-page.com/jobs/c993b7cc-298c-4817-b030-054193bd5842" target="_blank" style="color:var(--teal)">→ Careers Page</a> <span style="color:var(--ink-mute)">|</span> <a href="https://www.onlinejobs.ph/jobseekers/job/E-commerce-Operations-Lead-1662526" target="_blank" style="color:var(--ink-mute)">OLJ</a></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- APPLIED VIA OLJ -->
+  <div class="collapsible" id="col-applied">
+    <div class="collapsible-header" onclick="toggleCollapsible('col-applied')">
+      <h3 style="color:var(--ember)">Applied via OLJ <span class="count">(44 jobs · kat sent these)</span></h3>
+      <span class="toggle">▼</span>
+    </div>
+    <div class="collapsible-body">
+      <div class="job-item" data-job="olj1"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div class="job-title">Local SEO Specialist / GBP Manager</div><select class="job-status" data-job="olj1"><option value="applied" selected>applied</option><option value="interview">interview</option><option value="rejected">rejected</option><option value="skip">don't like</option></select></div><div class="job-meta">Rate not listed</div><div class="job-desc">Local SEO + Google Business Profile management.</div><div class="job-links"><a href="https://www.onlinejobs.ph/jobseekers/job/Local-Seo-Specialist-Google-Business-Profile-Manager-1658036" target="_blank" style="color:var(--ink-mute)">OLJ</a></div></div>
+      <div class="job-item" data-job="olj2"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div class="job-title">SEO Specialists</div><select class="job-status" data-job="olj2"><option value="applied" selected>applied</option><option value="interview">interview</option><option value="rejected">rejected</option><option value="skip">don't like</option></select></div><div class="job-meta">Rate not listed</div><div class="job-desc">General SEO role.</div><div class="job-links"><a href="https://www.onlinejobs.ph/jobseekers/job/SEO-Specialists-1615439" target="_blank" style="color:var(--ink-mute)">OLJ</a></div></div>
+      <div class="job-item" data-job="olj3"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div class="job-title">Senior VA (Part-Time/Full-Time)</div><select class="job-status" data-job="olj3"><option value="applied" selected>applied</option><option value="interview">interview</option><option value="rejected">rejected</option><option value="skip">don't like</option></select></div><div class="job-meta">Negotiable (~$1,733/mo for 20hrs)</div><div class="job-desc">Long-term senior VA role, flexible hours.</div><div class="job-links"><a href="https://www.onlinejobs.ph/jobseekers/job/Senior-Virtual-Assistant-Part-Time-Full-Time-Long-Term-Role-for-a-Sharp-Reliable-Pro-1662177" target="_blank" style="color:var(--ink-mute)">OLJ</a></div></div>
+      <div class="job-item" data-job="olj4"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div class="job-title">RCM Project Manager</div><select class="job-status" data-job="olj4"><option value="applied" selected>applied</option><option value="interview">interview</option><option value="rejected">rejected</option><option value="skip">don't like</option></select></div><div class="job-meta">$12/hr</div><div class="job-desc">Revenue cycle management PM. Healthcare adjacent.</div><div class="job-links"><a href="https://www.onlinejobs.ph/jobseekers/job/RCM-Project-Manager-1652345" target="_blank" style="color:var(--ink-mute)">OLJ</a></div></div>
+      <div class="job-item" data-job="olj5"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div class="job-title">Senior Local SEO Strategist</div><select class="job-status" data-job="olj5"><option value="applied" selected>applied</option><option value="interview">interview</option><option value="rejected">rejected</option><option value="skip">don't like</option></select></div><div class="job-meta">$2,200-3,000/mo</div><div class="job-desc">Senior local SEO role.</div><div class="job-links"><a href="https://www.onlinejobs.ph/jobseekers/job/Senior-Local-SEO-Strategist-1535751" target="_blank" style="color:var(--ink-mute)">OLJ</a></div></div>
+      <div class="job-item" data-job="olj6"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div class="job-title">Founder Support & Ops Coordinator</div><select class="job-status" data-job="olj6"><option value="applied" selected>applied</option><option value="interview">interview</option><option value="rejected">rejected</option><option value="skip">don't like</option></select></div><div class="job-meta">$12-18/hr</div><div class="job-desc">Founder support + operations coordination.</div><div class="job-links"><a href="https://www.onlinejobs.ph/jobseekers/job/Founder-Support-Operations-Coordinator-Remote-Contractor-1661962" target="_blank" style="color:var(--ink-mute)">OLJ</a></div></div>
+      <div class="job-item" data-job="olj7"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div class="job-title">Content Marketing Manager</div><select class="job-status" data-job="olj7"><option value="applied" selected>applied</option><option value="interview">interview</option><option value="rejected">rejected</option><option value="skip">don't like</option></select></div><div class="job-meta">$8-15/hr ($1,500-3,000/mo)</div><div class="job-desc">Content marketing management.</div><div class="job-links"><a href="https://www.onlinejobs.ph/jobseekers/job/Content-Marketing-Manager-1660483" target="_blank" style="color:var(--ink-mute)">OLJ</a></div></div>
+      <div class="job-item" data-job="olj8"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div class="job-title">Digital Marketing Assistant</div><select class="job-status" data-job="olj8"><option value="applied" selected>applied</option><option value="interview">interview</option><option value="rejected">rejected</option><option value="skip">don't like</option></select></div><div class="job-meta">$1,500-4,500/mo</div><div class="job-desc">Digital marketing support.</div><div class="job-links"><a href="https://www.onlinejobs.ph/jobseekers/job/Digital-Marketing-Assistant-1520831" target="_blank" style="color:var(--ink-mute)">OLJ</a></div></div>
+      <div class="job-item" data-job="olj9"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div class="job-title">Creator & Content Manager</div><select class="job-status" data-job="olj9"><option value="applied" selected>applied</option><option value="interview">interview</option><option value="rejected">rejected</option><option value="skip">don't like</option></select></div><div class="job-meta">$1,500-2,300/mo</div><div class="job-desc">Creator + content management.</div><div class="job-links"><a href="https://www.onlinejobs.ph/jobseekers/job/Creator-Content-Manager-1625389" target="_blank" style="color:var(--ink-mute)">OLJ</a></div></div>
+      <div class="job-item" data-job="olj10"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div class="job-title">Google Ads Specialist (US Agency)</div><select class="job-status" data-job="olj10"><option value="applied" selected>applied</option><option value="interview">interview</option><option value="rejected">rejected</option><option value="skip">don't like</option></select></div><div class="job-meta">$1,500-2,300/mo</div><div class="job-desc">Google Ads for US digital marketing agency.</div><div class="job-links"><a href="https://www.onlinejobs.ph/jobseekers/job/Google-Ads-Specialist-for-US-Based-Digital-Marketing-Agency-1142871" target="_blank" style="color:var(--ink-mute)">OLJ</a></div></div>
+      <div class="job-item" data-job="olj11"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div class="job-title">Marketing Manager</div><select class="job-status" data-job="olj11"><option value="applied" selected>applied</option><option value="interview">interview</option><option value="rejected">rejected</option><option value="skip">don't like</option></select></div><div class="job-meta">$2,000-4,000/mo</div><div class="job-desc">Marketing management role.</div><div class="job-links"><a href="https://www.onlinejobs.ph/jobseekers/job/Marketing-Manager-1661859" target="_blank" style="color:var(--ink-mute)">OLJ</a></div></div>
+      <div class="job-item" data-job="olj12"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div class="job-title">Growth Marketing Assistant</div><select class="job-status" data-job="olj12"><option value="applied" selected>applied</option><option value="interview">interview</option><option value="rejected">rejected</option><option value="skip">don't like</option></select></div><div class="job-meta">$1,500-2,500/mo</div><div class="job-desc">Growth marketing support.</div><div class="job-links"><a href="https://www.onlinejobs.ph/jobseekers/job/Growth-Marketing-Assistant-1525908" target="_blank" style="color:var(--ink-mute)">OLJ</a></div></div>
+      <div class="job-item" data-job="olj13"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div class="job-title">Digital Marketing Assistant #2</div><select class="job-status" data-job="olj13"><option value="applied" selected>applied</option><option value="interview">interview</option><option value="rejected">rejected</option><option value="skip">don't like</option></select></div><div class="job-meta">$1,500-4,000/mo</div><div class="job-desc">Digital marketing support.</div><div class="job-links"><a href="https://www.onlinejobs.ph/jobseekers/job/Digital-Marketing-Assistant-1525909" target="_blank" style="color:var(--ink-mute)">OLJ</a></div></div>
+      <div class="job-item" data-job="olj14"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div class="job-title">Project Manager (Marketing Agency)</div><select class="job-status" data-job="olj14"><option value="applied" selected>applied</option><option value="interview">interview</option><option value="rejected">rejected</option><option value="skip">don't like</option></select></div><div class="job-meta">₱110,000-160,000/mo</div><div class="job-desc">PM for full-service marketing agency. Subject: "Candor as a Compass"</div><div class="job-links"><a href="https://www.onlinejobs.ph/jobseekers/job/Project-Manager-for-Full-Service-Marketing-Agency-1650748" target="_blank" style="color:var(--ink-mute)">OLJ</a></div></div>
+      <div class="job-item" data-job="olj15"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div class="job-title">Content Marketing Manager (Remote)</div><select class="job-status" data-job="olj15"><option value="applied" selected>applied</option><option value="interview">interview</option><option value="rejected">rejected</option><option value="skip">don't like</option></select></div><div class="job-meta">Rate varies</div><div class="job-desc">Remote content marketing.</div><div class="job-links"><a href="https://www.onlinejobs.ph/jobseekers/job/CONTENT-MARKETING-MANAGER-REMOTE-1661674" target="_blank" style="color:var(--ink-mute)">OLJ</a></div></div>
+      <div class="job-item" data-job="olj16"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div class="job-title">Growth Marketing Lead (EU E-commerce)</div><select class="job-status" data-job="olj16"><option value="applied" selected>applied</option><option value="interview">interview</option><option value="rejected">rejected</option><option value="skip">don't like</option></select></div><div class="job-meta">$2,000-3,500/mo</div><div class="job-desc">Head of marketing for European e-commerce.</div><div class="job-links"><a href="https://www.onlinejobs.ph/jobseekers/job/Growth-Marketing-Lead-Head-of-Marketing-I-European-Ecommerce-I-Full-time-Remote-I-20003500mo-1662441" target="_blank" style="color:var(--ink-mute)">OLJ</a></div></div>
+      <div class="job-item" data-job="olj17"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div class="job-title">Social Media Manager</div><select class="job-status" data-job="olj17"><option value="applied" selected>applied</option><option value="interview">interview</option><option value="rejected">rejected</option><option value="skip">don't like</option></select></div><div class="job-meta">Rate varies</div><div class="job-desc">Social media management.</div><div class="job-links"><a href="https://www.onlinejobs.ph/jobseekers/job/Social-Media-Manager-1661779" target="_blank" style="color:var(--ink-mute)">OLJ</a></div></div>
+      <div class="job-item" data-job="olj18"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div class="job-title">Creative Strategist (E-commerce Agency)</div><select class="job-status" data-job="olj18"><option value="applied" selected>applied</option><option value="interview">interview</option><option value="rejected">rejected</option><option value="skip">don't like</option></select></div><div class="job-meta">Rate varies</div><div class="job-desc">Creative strategy for e-commerce agency.</div><div class="job-links"><a href="https://www.onlinejobs.ph/jobseekers/job/Full-Time-Creative-Strategist-for-E-commerce-Agency-1554510" target="_blank" style="color:var(--ink-mute)">OLJ</a></div></div>
+      <div class="job-item" data-job="olj19"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div class="job-title">SEO Marketing + Social Media Manager</div><select class="job-status" data-job="olj19"><option value="applied" selected>applied</option><option value="interview">interview</option><option value="rejected">rejected</option><option value="skip">don't like</option></select></div><div class="job-meta">Rate varies</div><div class="job-desc">SEO + social media hybrid.</div><div class="job-links"><a href="https://www.onlinejobs.ph/jobseekers/job/SEO-marketing-and-social-media-manager-1645451" target="_blank" style="color:var(--ink-mute)">OLJ</a></div></div>
+      <div class="job-item" data-job="olj20"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div class="job-title">Customer Success Project Manager</div><select class="job-status" data-job="olj20"><option value="applied" selected>applied</option><option value="interview">interview</option><option value="rejected">rejected</option><option value="skip">don't like</option></select></div><div class="job-meta">Rate varies</div><div class="job-desc">CS + PM hybrid role.</div><div class="job-links"><a href="https://www.onlinejobs.ph/jobseekers/job/Customer-Success-Project-Manager-1650599" target="_blank" style="color:var(--ink-mute)">OLJ</a></div></div>
+      <div class="job-item" data-job="olj21"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div class="job-title">Performance Marketing Manager #1</div><select class="job-status" data-job="olj21"><option value="applied" selected>applied</option><option value="interview">interview</option><option value="rejected">rejected</option><option value="skip">don't like</option></select></div><div class="job-meta">Rate varies</div><div class="job-desc">Performance marketing.</div><div class="job-links"><a href="https://www.onlinejobs.ph/jobseekers/job/Performance-Marketing-Manager-1641944" target="_blank" style="color:var(--ink-mute)">OLJ</a></div></div>
+      <div class="job-item" data-job="olj22"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div class="job-title">Marketing Manager #2</div><select class="job-status" data-job="olj22"><option value="applied" selected>applied</option><option value="interview">interview</option><option value="rejected">rejected</option><option value="skip">don't like</option></select></div><div class="job-meta">Rate varies</div><div class="job-desc">Marketing management.</div><div class="job-links"><a href="https://www.onlinejobs.ph/jobseekers/job/Marketing-Manager-1371173" target="_blank" style="color:var(--ink-mute)">OLJ</a></div></div>
+      <div class="job-item" data-job="olj23"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div class="job-title">Marketing Manager #3</div><select class="job-status" data-job="olj23"><option value="applied" selected>applied</option><option value="interview">interview</option><option value="rejected">rejected</option><option value="skip">don't like</option></select></div><div class="job-meta">Rate varies</div><div class="job-desc">Marketing management.</div><div class="job-links"><a href="https://www.onlinejobs.ph/jobseekers/job/Marketing-Manager-1506494" target="_blank" style="color:var(--ink-mute)">OLJ</a></div></div>
+      <div class="job-item" data-job="olj24"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div class="job-title">Customer Success Manager (UGC Agency)</div><select class="job-status" data-job="olj24"><option value="applied" selected>applied</option><option value="interview">interview</option><option value="rejected">rejected</option><option value="skip">don't like</option></select></div><div class="job-meta">$3,040-5,080/mo OTE</div><div class="job-desc">CS for UGC creator marketing agency.</div><div class="job-links"><a href="https://www.onlinejobs.ph/jobseekers/job/Customer-Success-Manager-UGC-Creator-Marketing-Agency-3040-to-5080month-OTE-1662118" target="_blank" style="color:var(--ink-mute)">OLJ</a></div></div>
+      <div class="job-item" data-job="olj25"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div class="job-title">Administrative Assistant</div><select class="job-status" data-job="olj25"><option value="applied" selected>applied</option><option value="interview">interview</option><option value="rejected">rejected</option><option value="skip">don't like</option></select></div><div class="job-meta">Rate varies</div><div class="job-desc">Admin support role.</div><div class="job-links"><a href="https://www.onlinejobs.ph/jobseekers/job/Administrative-Assistant-1662555" target="_blank" style="color:var(--ink-mute)">OLJ</a></div></div>
+      <div class="job-item" data-job="olj26"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div class="job-title">Senior Performance Marketing Manager</div><select class="job-status" data-job="olj26"><option value="applied" selected>applied</option><option value="interview">interview</option><option value="rejected">rejected</option><option value="skip">don't like</option></select></div><div class="job-meta">Rate varies</div><div class="job-desc">Meta Ads + Google Ads focus.</div><div class="job-links"><a href="https://www.onlinejobs.ph/jobseekers/job/Senior-Performance-Marketing-Manager-Meta-Ads-Google-Ads-1661890" target="_blank" style="color:var(--ink-mute)">OLJ</a></div></div>
+      <div class="job-item" data-job="olj27"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div class="job-title">Performance Marketing Manager #2</div><select class="job-status" data-job="olj27"><option value="applied" selected>applied</option><option value="interview">interview</option><option value="rejected">rejected</option><option value="skip">don't like</option></select></div><div class="job-meta">Rate varies</div><div class="job-desc">Performance marketing.</div><div class="job-links"><a href="https://www.onlinejobs.ph/jobseekers/job/Performance-Marketing-Manager-1595710" target="_blank" style="color:var(--ink-mute)">OLJ</a></div></div>
+      <div class="job-item" data-job="olj28"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div class="job-title">Marketing Growth Operator</div><select class="job-status" data-job="olj28"><option value="applied" selected>applied</option><option value="interview">interview</option><option value="rejected">rejected</option><option value="skip">don't like</option></select></div><div class="job-meta">Rate varies</div><div class="job-desc">Growth marketing operations.</div><div class="job-links"><a href="https://www.onlinejobs.ph/jobseekers/job/Marketing-Growth-operator-1662557" target="_blank" style="color:var(--ink-mute)">OLJ</a></div></div>
+      <div class="job-item" data-job="olj29"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div class="job-title">AI Automation Lead</div><select class="job-status" data-job="olj29"><option value="applied" selected>applied</option><option value="interview">interview</option><option value="rejected">rejected</option><option value="skip">don't like</option></select></div><div class="job-meta">Rate varies</div><div class="job-desc">Build AI systems that run the business.</div><div class="job-links"><a href="https://www.onlinejobs.ph/jobseekers/job/AI-Automation-Lead-Build-the-Systems-That-Run-Our-Business-1631042" target="_blank" style="color:var(--ink-mute)">OLJ</a></div></div>
+      <div class="job-item" data-job="olj30"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div class="job-title">AI Infrastructure Lead (E-commerce)</div><select class="job-status" data-job="olj30"><option value="applied" selected>applied</option><option value="interview">interview</option><option value="rejected">rejected</option><option value="skip">don't like</option></select></div><div class="job-meta">Rate varies</div><div class="job-desc">AI infrastructure for e-commerce.</div><div class="job-links"><a href="https://www.onlinejobs.ph/jobseekers/job/AI-Infrastructure-Lead-E-Commerce-Remote-Full-Time-1625388" target="_blank" style="color:var(--ink-mute)">OLJ</a></div></div>
+      <div class="job-item" data-job="olj31"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div class="job-title">Virtual Assistant</div><select class="job-status" data-job="olj31"><option value="applied" selected>applied</option><option value="interview">interview</option><option value="rejected">rejected</option><option value="skip">don't like</option></select></div><div class="job-meta">Rate varies</div><div class="job-desc">General VA role.</div><div class="job-links"><a href="https://www.onlinejobs.ph/jobseekers/job/Virtual-Assistant-1662619" target="_blank" style="color:var(--ink-mute)">OLJ</a></div></div>
+      <div class="job-item" data-job="olj32"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div class="job-title">E-commerce Growth Marketing Manager</div><select class="job-status" data-job="olj32"><option value="applied" selected>applied</option><option value="interview">interview</option><option value="rejected">rejected</option><option value="skip">don't like</option></select></div><div class="job-meta">Rate varies</div><div class="job-desc">Premium Australian jewellery brand.</div><div class="job-links"><a href="https://www.onlinejobs.ph/jobseekers/job/Ecommerce-Growth-Marketing-Manager-Premium-Australian-Jewellery-Brand-1662229" target="_blank" style="color:var(--ink-mute)">OLJ</a></div></div>
+      <div class="job-item" data-job="olj33"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div class="job-title">Ops Manager / Chief of Staff (Growth Firm)</div><select class="job-status" data-job="olj33"><option value="applied" selected>applied</option><option value="interview">interview</option><option value="rejected">rejected</option><option value="skip">don't like</option></select></div><div class="job-meta">Rate varies</div><div class="job-desc">Ops/CoS for US growth firm.</div><div class="job-links"><a href="https://www.onlinejobs.ph/jobseekers/job/Operations-Manager-Chief-of-Staff-for-US-Growth-Firm-Remote-1662080" target="_blank" style="color:var(--ink-mute)">OLJ</a></div></div>
+      <div class="job-item" data-job="olj34"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div class="job-title">AI Operations Manager</div><select class="job-status" data-job="olj34"><option value="applied" selected>applied</option><option value="interview">interview</option><option value="rejected">rejected</option><option value="skip">don't like</option></select></div><div class="job-meta">Rate varies</div><div class="job-desc">AI + operations hybrid.</div><div class="job-links"><a href="https://www.onlinejobs.ph/jobseekers/job/AI-Operations-Manager-1661681" target="_blank" style="color:var(--ink-mute)">OLJ</a></div></div>
+      <div class="job-item" data-job="olj35"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div class="job-title">Revenue Operations / Systems Operator</div><select class="job-status" data-job="olj35"><option value="applied" selected>applied</option><option value="interview">interview</option><option value="rejected">rejected</option><option value="skip">don't like</option></select></div><div class="job-meta">Rate varies</div><div class="job-desc">RevOps + systems.</div><div class="job-links"><a href="https://www.onlinejobs.ph/jobseekers/job/Revenue-Operations-Systems-Operator-1661694" target="_blank" style="color:var(--ink-mute)">OLJ</a></div></div>
+      <div class="job-item" data-job="olj36"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div class="job-title">Chief of Staff</div><select class="job-status" data-job="olj36"><option value="applied" selected>applied</option><option value="interview">interview</option><option value="rejected">rejected</option><option value="skip">don't like</option></select></div><div class="job-meta">Rate varies</div><div class="job-desc">CoS role.</div><div class="job-links"><a href="https://www.onlinejobs.ph/jobseekers/job/Chief-Of-Staff-1649863" target="_blank" style="color:var(--ink-mute)">OLJ</a></div></div>
+      <div class="job-item" data-job="olj37"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div class="job-title">Integration Engineer / No-Code Dev (Base44)</div><select class="job-status" data-job="olj37"><option value="applied" selected>applied</option><option value="interview">interview</option><option value="rejected">rejected</option><option value="skip">don't like</option></select></div><div class="job-meta">Rate varies</div><div class="job-desc">No-code/low-code integration.</div><div class="job-links"><a href="https://www.onlinejobs.ph/jobseekers/job/Integration-Engineer-No-CodeLow-Code-Developer-Base44-1639715" target="_blank" style="color:var(--ink-mute)">OLJ</a></div></div>
+      <div class="job-item" data-job="olj38"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div class="job-title">Executive Operations Partner / COO</div><select class="job-status" data-job="olj38"><option value="applied" selected>applied</option><option value="interview">interview</option><option value="rejected">rejected</option><option value="skip">don't like</option></select></div><div class="job-meta">Rate varies</div><div class="job-desc">Exec ops partner, COO-level.</div><div class="job-links"><a href="https://www.onlinejobs.ph/jobseekers/job/Executive-Operations-Partner-Remote-COO-1662064" target="_blank" style="color:var(--ink-mute)">OLJ</a></div></div>
+      <div class="job-item" data-job="olj39"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div class="job-title">Operations Manager (AI Tech Startup)</div><select class="job-status" data-job="olj39"><option value="applied" selected>applied</option><option value="interview">interview</option><option value="rejected">rejected</option><option value="skip">don't like</option></select></div><div class="job-meta">Rate varies</div><div class="job-desc">Ops for global AI tech startup.</div><div class="job-links"><a href="https://www.onlinejobs.ph/jobseekers/job/Global-AI-Tech-Startup-Experienced-Operations-Manager-1646695" target="_blank" style="color:var(--ink-mute)">OLJ</a></div></div>
+      <div class="job-item" data-job="olj40"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div class="job-title">Client Success & Community Manager</div><select class="job-status" data-job="olj40"><option value="applied" selected>applied</option><option value="interview">interview</option><option value="rejected">rejected</option><option value="skip">don't like</option></select></div><div class="job-meta">Rate varies</div><div class="job-desc">Client success + community.</div><div class="job-links"><a href="https://www.onlinejobs.ph/jobseekers/job/Client-Success-Community-Manager-1657414" target="_blank" style="color:var(--ink-mute)">OLJ</a></div></div>
+      <div class="job-item" data-job="olj41"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div class="job-title">Senior SEO Project Manager</div><select class="job-status" data-job="olj41"><option value="applied" selected>applied</option><option value="interview">interview</option><option value="rejected">rejected</option><option value="skip">don't like</option></select></div><div class="job-meta">$2,000-3,000/mo + bonus</div><div class="job-desc">Full-stack SEO: on-page, technical, off-page, client success.</div><div class="job-links"><a href="https://www.onlinejobs.ph/jobseekers/job/Senior-SEO-Project-Manager-Senior-Full-Stack-SEO-Expert-On-Page-Technical-Off-Page-Client-Success-1644683" target="_blank" style="color:var(--ink-mute)">OLJ</a></div></div>
+      <div class="job-item" data-job="olj42"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div class="job-title">AI Platform & Product Operations Lead</div><select class="job-status" data-job="olj42"><option value="applied" selected>applied</option><option value="interview">interview</option><option value="rejected">rejected</option><option value="skip">don't like</option></select></div><div class="job-meta">Rate varies</div><div class="job-desc">AI platform ops. Subject: AIOP, code: DHOPS0626</div><div class="job-links"><a href="https://www.onlinejobs.ph/jobseekers/job/AI-Platform-Product-Operations-Lead-1661367" target="_blank" style="color:var(--ink-mute)">OLJ</a></div></div>
+      <div class="job-item" data-job="olj43"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div class="job-title">Executive Assistant / Ops Manager</div><select class="job-status" data-job="olj43"><option value="applied" selected>applied</option><option value="interview">interview</option><option value="rejected">rejected</option><option value="skip">don't like</option></select></div><div class="job-meta">Rate varies</div><div class="job-desc">EA + ops manager hybrid.</div><div class="job-links"><a href="https://www.onlinejobs.ph/jobseekers/job/Executive-assistant-Operations-manager-1455137" target="_blank" style="color:var(--ink-mute)">OLJ</a></div></div>
+      <div class="job-item" data-job="olj44"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div class="job-title">Chief of Staff (High Growth E-com)</div><select class="job-status" data-job="olj44"><option value="applied" selected>applied</option><option value="interview">interview</option><option value="rejected">rejected</option><option value="skip">don't like</option></select></div><div class="job-meta">Rate varies</div><div class="job-desc">CoS for high-growth e-commerce company.</div><div class="job-links"><a href="https://www.onlinejobs.ph/jobseekers/job/Chief-of-Staff-High-Growth-E-com-Company-1635479" target="_blank" style="color:var(--ink-mute)">OLJ</a></div></div>
+    </div>
+  </div>
+
+  <!-- LEADS -->
+  <div class="collapsible" id="col-leads">
+    <div class="collapsible-header" onclick="toggleCollapsible('col-leads')">
+      <h3 style="color:var(--plum)">Leads <span class="count">(7 jobs · not applied yet)</span></h3>
+      <span class="toggle">▼</span>
+    </div>
+    <div class="collapsible-body">
+      <div class="job-item" data-job="lead1"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div class="job-title">Chief of Staff / Ops Manager / Senior EA</div><select class="job-status" data-job="lead1"><option value="notyet">not yet</option><option value="applied">applied</option><option value="interview">interview</option><option value="rejected">rejected</option><option value="skip">don't like</option></select></div><div class="job-meta">$1,800-2,000/mo · needs Loom</div><div class="job-desc">Requires 1-2 min full-face video intro.</div><div class="job-links"><a href="https://www.onlinejobs.ph/jobseekers/job/Chief-of-Staff-Operations-Manager-Senior-Executive-Assistant-1653288" target="_blank" style="color:var(--ink-mute)">OLJ</a></div></div>
+      <div class="job-item" data-job="lead2"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div class="job-title">Senior AI Search & Local SEO Lead</div><select class="job-status" data-job="lead2"><option value="notyet">not yet</option><option value="applied">applied</option><option value="interview">interview</option><option value="rejected">rejected</option><option value="skip">don't like</option></select></div><div class="job-meta">$15-20/hr · needs Loom</div><div class="job-desc">AI search + local SEO. Needs proof of results + 3-5 min Loom.</div><div class="job-links"><a href="https://www.onlinejobs.ph/jobseekers/job/Senior-AI-Search-Local-SEO-Lead-Contract-to-Hire-1663011" target="_blank" style="color:var(--ink-mute)">OLJ</a></div></div>
+      <div class="job-item" data-job="lead3"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div class="job-title">RevOps - Business Systems Manager</div><select class="job-status" data-job="lead3"><option value="notyet">not yet</option><option value="applied">applied</option><option value="interview">interview</option><option value="rejected">rejected</option><option value="skip">don't like</option></select></div><div class="job-meta">$2,500-3,500/mo</div><div class="job-desc">RevOps + business systems. Check if external app.</div><div class="job-links"><a href="https://www.onlinejobs.ph/jobseekers/job/RevOps-Business-Systems-Manager-Review-1647888" target="_blank" style="color:var(--ink-mute)">OLJ</a></div></div>
+      <div class="job-item" data-job="lead4"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div class="job-title">Tech Operations & Automation Manager</div><select class="job-status" data-job="lead4"><option value="notyet">not yet</option><option value="applied">applied</option><option value="interview">interview</option><option value="rejected">rejected</option><option value="skip">don't like</option></select></div><div class="job-meta">$1,600+/mo</div><div class="job-desc">Tech ops + automation. Good fit for systems building.</div><div class="job-links"><a href="https://www.onlinejobs.ph/jobseekers/job/Tech-Operations-Automation-Manager-1485009" target="_blank" style="color:var(--ink-mute)">OLJ</a></div></div>
+      <div class="job-item" data-job="lead5"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div class="job-title">Chief of Staff (Web Design Agency)</div><select class="job-status" data-job="lead5"><option value="notyet">not yet</option><option value="applied">applied</option><option value="interview">interview</option><option value="rejected">rejected</option><option value="skip">don't like</option></select></div><div class="job-meta">$2,800/mo</div><div class="job-desc">CoS at web design agency. High pay.</div><div class="job-links"><a href="https://www.onlinejobs.ph/jobseekers/job/Chief-of-Staff-for-Web-Design-Agency-1386889" target="_blank" style="color:var(--ink-mute)">OLJ</a></div></div>
+      <div class="job-item" data-job="lead6"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div class="job-title">EA/Chief of Staff (Startup, Part-Time)</div><select class="job-status" data-job="lead6"><option value="notyet">not yet</option><option value="applied">applied</option><option value="interview">interview</option><option value="rejected">rejected</option><option value="skip">don't like</option></select></div><div class="job-meta">$1,320/mo · 30 hrs/wk</div><div class="job-desc">Part-time EA + CoS. Lower pay but flexible.</div><div class="job-links"><a href="https://www.onlinejobs.ph/jobseekers/job/Executive-Assistant-Chief-of-Staff-Startup-Co-Founder-Long-term-30-HoursWeek-1626701" target="_blank" style="color:var(--ink-mute)">OLJ</a></div></div>
+      <div class="job-item" data-job="lead7"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div class="job-title">Local SEO + WordPress Elementor Builder</div><select class="job-status" data-job="lead7"><option value="notyet">not yet</option><option value="applied">applied</option><option value="interview">interview</option><option value="rejected">rejected</option><option value="skip">don't like</option></select></div><div class="job-meta">$1,200-1,600/mo · needs video</div><div class="job-desc">Local SEO + WordPress. 2-3 min intro video required.</div><div class="job-links"><a href="https://www.onlinejobs.ph/jobseekers/job/Local-SEO-Specialist-and-WordPress-Elementor-Website-Builder-Full-Time-Remote-Position-1663196" target="_blank" style="color:var(--ink-mute)">OLJ</a></div></div>
+    </div>
+  </div>
+
+  <div style="margin-top:48px;padding-top:32px;border-top:1px solid var(--line)">
+    <div class="eyebrow" style="color:var(--plum)">daily notes</div>
+    <h2 style="margin-bottom:16px;margin-top:8px">work log</h2>
+    
+    <div id="work-list">
+      <div class="work-entry">
+        <div class="date">Jun 19, 2026 · Fri</div>
+        <div class="body">book vault: added analytics dashboard to admin panel. tracking page views, book clicks, order funnel, wishlists. also fixed mobile view issues. 60 books now in "coming soon" with covers and summaries.</div>
+      </div>
+      <div class="work-entry">
+        <div class="date">Jun 16, 2026 · Tue</div>
+        <div class="body">THE BOOK VAULT PH LAUNCHED. full website with supabase backend, admin panel, order flow, payment page. set up @thebookvaultph on instagram. feels surreal seeing it live.</div>
+      </div>
+      <div class="work-entry">
+        <div class="date">Jun 6, 2026 · Sat</div>
+        <div class="body">apply points refreshed. sent 3 ops-focused applications: AI Platform & Product Operations Lead, Executive Assistant / Operations Manager, Chief of Staff. shifting focus from SEO to ops roles.</div>
+      </div>
+      <div class="work-entry">
+        <div class="date">Jun 5, 2026 · Fri</div>
+        <div class="body">hit 41 OLJ applications total. first response from RCM Project Manager role asking about healthcare experience, drafted honest reply highlighting transferable skills.</div>
+      </div>
+      <div class="work-entry">
+        <div class="date">Jun 5, 2026 · Fri</div>
+        <div class="body">prepped DR strategy reports for maddie 1:1. thesis: DR is still moved by backlinks. proposed experiments with outrank, free tools, local sponsorships, connectively.</div>
+      </div>
+      <div class="work-entry">
+        <div class="date">Jun 4, 2026 · Thu</div>
+        <div class="body">updated portfolio pricing. ops audit $300, systems build $1,500 min, full ops setup $3,000, hourly $40, full-time $20/hr. feeling more confident about rates.</div>
+      </div>
+    </div>
+
+    <form id="work-form" style="margin-top:24px">
+      <textarea id="work-input" placeholder="quick work note..."></textarea>
+      <button type="submit" style="margin-top:10px;padding:10px 20px;background:var(--ember);color:var(--bg);border-radius:6px;font-weight:600;font-family:var(--mono);font-size:0.8rem;letter-spacing:0.1em;text-transform:uppercase">save entry</button>
+    </form>
+  </div>
+</section>
+
+<!-- JOURNAL -->
+<section class="section" id="journal">
+  <div class="eyebrow">soft archive</div>
+  <h1 class="title">the <em>journal</em>.</h1>
+  <p class="sub">notes, observations, the things you'd otherwise lose.</p>
+
+  <div id="journal-list">
+    <div class="entry">
+      <div class="date">Jun 19, 2026 · Fri</div>
+      <div class="body">daydreaming about mt. pinatubo. did the math — ₱13-15k for flights, tour, hotel, food. solo trip energy. might actually do it.</div>
+    </div>
+    <div class="entry">
+      <div class="date">Jun 19, 2026 · Fri</div>
+      <div class="body">bought 60 books wholesale for the vault. ₱45 each. priced them ₱150-300 based on goodreads ratings. this is really happening.</div>
+    </div>
+    <div class="entry">
+      <div class="date">Jun 18, 2026 · Thu</div>
+      <div class="body">watsons run for curly hair stuff. heat damage is real. trying cream silk amino collagen deep repair. weekly mask, leave-in daily, no more heat. letting the healthy hair grow in.</div>
+    </div>
+    <div class="entry">
+      <div class="date">Jun 17, 2026 · Wed</div>
+      <div class="body">mercury drug. bought trimag for sleep. also asked about energy boosters — turns out the tired eyes are probably screen strain + graveyard shift catching up. might try blue light glasses.</div>
+    </div>
+    <div class="entry">
+      <div class="date">Jun 16, 2026 · Tue</div>
+      <div class="body">THE BOOK VAULT IS LIVE. full website, admin panel, supabase, socials. i cried a little. this tiny dream i've been carrying around is actually real now. instagram is up. detective mochi is the mascot. it's mine.</div>
+    </div>
+    <div class="entry">
+      <div class="date">Jun 16, 2026 · Tue</div>
+      <div class="body">drew up what the bookstore addition to the house could look like. 3x3m beside the carport, second floor extends over it. the book vault but physical. someday.</div>
+    </div>
+    <div class="entry">
+      <div class="date">Jun 16, 2026 · Tue</div>
+      <div class="body">another late night realizing i'm always the one who reaches out. not just with men — friends too. aby won't come without her boyfriend. everyone contacts me when they need something, not to hang out. trying to retreat and see who actually shows up.</div>
+    </div>
+    <div class="entry">
+      <div class="date">Jun 15, 2026 · Mon</div>
+      <div class="body">finalized the artemis tattoo design. she guards nyx. nyx holds the siren and the phoenix. the storyline: "your strength protects your darkness. and within that darkness lives both your pain and your power." getting artemis first.</div>
+    </div>
+    <div class="entry">
+      <div class="date">Jun 15, 2026 · Mon</div>
+      <div class="body">feeling like a ghost. watching myself live instead of actually living. exhausted emotionally. in survival mode for years. graveyard shift isolates me from everyone. asleep when they're awake. awake when they're asleep.</div>
+    </div>
+    <div class="entry">
+      <div class="date">Jun 6, 2026 · Sat</div>
+      <div class="body">considering throwing out the vape. tolerance built up, don't even feel the buzz anymore, but it's still wrecking REM sleep. undecided.</div>
+    </div>
+    <div class="entry">
+      <div class="date">Jun 6, 2026 · Sat</div>
+      <div class="body">pickleball paddle shopping. found pre-loved boomstik in dumaguete for ₱10k. black and gold, looks clean. shipping is ₱1k though which stings.</div>
+    </div>
+    <div class="entry">
+      <div class="date">Jun 4, 2026 · Thu</div>
+      <div class="body">watch party attempt with gail for the mentalist. netflix screen share is broken because DRM. annoying.</div>
+    </div>
+    <div class="entry">
+      <div class="date">Jun 3, 2026 · Wed</div>
+      <div class="body">rewrote the portfolio. operations lead, not just seo specialist. it finally reads like the actual job. wrote two songs about natnat with kat. recorded one on guitar.</div>
+    </div>
+    <div class="entry">
+      <div class="date">May 26, 2026 · Tue</div>
+      <div class="body">park near centermall. bright moon, alone, smoking. tarot said what i already knew. neither beanch nor natnat. the loneliness is bigger than a relationship can fix.</div>
+    </div>
+    <div class="entry">
+      <div class="date">May 25, 2026 · Mon</div>
+      <div class="body">hair botox done. dark brown. salon felt like a small reset. saw natnat saturday — he kept looking. dreams since.</div>
+    </div>
+    <div class="entry">
+      <div class="date">Mar 5, 2026</div>
+      <div class="body">lola lina passed. wish i'd gone more often. the regret will sit for a while.</div>
+    </div>
+  </div>
+
+  <form id="journal-form" style="margin-top:24px">
+    <textarea id="journal-input" placeholder="quick note, no pressure..."></textarea>
+    <button type="submit" style="margin-top:10px;padding:10px 20px;background:var(--teal);color:var(--bg);border-radius:6px;font-weight:600;font-family:var(--mono);font-size:0.8rem;letter-spacing:0.1em;text-transform:uppercase">save entry</button>
+  </form>
+</section>
+
+<!-- GOALS -->
+<section class="section" id="goals">
+  <div class="eyebrow">forward motion</div>
+  <h1 class="title">the <em>goals</em>.</h1>
+  <p class="sub">what you're building toward, in your own time.</p>
+
+  <div class="goal">
+    <div class="top"><span class="name">2nd floor extension</span><span class="pct">8%</span></div>
+    <div class="desc">black metal cladding · continuous balcony · 30 sqm added. budget ₱219k - ₱489k.</div>
+    <div class="bar"><div class="bar-fill" style="width:8%"></div></div>
+  </div>
+  <div class="goal">
+    <div class="top"><span class="name">ops consulting side biz</span><span class="pct">25%</span></div>
+    <div class="desc">portfolio rewritten, services page live. next: outreach, first 3 clients.</div>
+    <div class="bar"><div class="bar-fill" style="width:25%"></div></div>
+  </div>
+  <div class="goal">
+    <div class="top"><span class="name">the book vault ph</span><span class="pct">70%</span></div>
+    <div class="desc">website live, 60+ books sourced, socials up. next: first sale, packaging supplies, grow inventory.</div>
+    <div class="bar"><div class="bar-fill" style="width:70%"></div></div>
+  </div>
+  <div class="goal">
+    <div class="top"><span class="name">rest without guilt</span><span class="pct">3%</span></div>
+    <div class="desc">the hardest one. learning that stopping isn't dangerous.</div>
+    <div class="bar"><div class="bar-fill" style="width:3%"></div></div>
+  </div>
+  <div class="goal">
+    <div class="top"><span class="name">read 30 books this year</span><span class="pct">40%</span></div>
+    <div class="desc">12 of 30 so far. comfortable pace.</div>
+    <div class="bar"><div class="bar-fill" style="width:40%"></div></div>
+  </div>
+</section>
+
+<!-- TRAVEL -->
+<section class="section" id="travel">
+  <div class="eyebrow">somewhere else</div>
+  <h1 class="title">the <em>wanderlust</em>.</h1>
+  <p class="sub">places to go, things to see, trips to plan.</p>
+
+  <h2>trip ideas</h2>
+  <div class="goal" style="border-left:3px solid var(--ember)">
+    <div class="top"><span class="name">Mt. Pinatubo · day trip</span><span class="pct" style="color:var(--ember)">dreaming</span></div>
+    <div class="desc">from Bacolod (BCD) · est. ₱13,000 - ₱15,000 all in</div>
+
+    <div style="margin-top:14px;background:var(--bg-3);border:1px solid var(--line);border-radius:8px;padding:16px">
+      <div style="font-family:var(--mono);font-size:0.7rem;color:var(--ink-mute);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:10px">budget breakdown</div>
+      <div class="expense-row"><span>Flights BCD-MNL roundtrip</span><span class="amt">₱3,500 - 5,000</span></div>
+      <div class="expense-row"><span>Mt. Pinatubo tour (joiner)</span><span class="amt">₱2,500 - 3,000</span></div>
+      <div class="expense-row"><span>Hotel · 3 nights near Clark</span><span class="amt">₱2,500 - 5,000</span></div>
+      <div class="expense-row"><span>Food · 3 days</span><span class="amt">₱1,500 - 2,500</span></div>
+      <div class="expense-row"><span>Misc</span><span class="amt">₱500 - 1,000</span></div>
+    </div>
+
+    <p style="margin-top:14px;color:var(--ink-dim);font-size:0.88rem;line-height:1.6">book flights early on Cebu Pacific or AirAsia. tour includes 4x4 ride, guide, permits. budget hotels near Clark start around ₱800/night.</p>
+  </div>
+
+  <h2 style="margin-top:40px">bucket list</h2>
+  <div class="grid grid-3">
+    <div class="card">
+      <div class="label">return trip</div>
+      <h3 style="font-family:var(--serif);font-weight:500;font-size:1.2rem">Sagada</h3>
+      <p class="note" style="margin-top:6px">favorite place. the quiet, the cold, the pine.</p>
+    </div>
+    <div class="card">
+      <div class="label">return trip</div>
+      <h3 style="font-family:var(--serif);font-weight:500;font-size:1.2rem">Don Salvador Benedicto</h3>
+      <p class="note" style="margin-top:6px">favorite place. close enough to drive Nyx up.</p>
+    </div>
+    <div class="card">
+      <div class="label">someday</div>
+      <h3 style="font-family:var(--serif);font-weight:500;font-size:1.2rem">Japan</h3>
+      <p class="note" style="margin-top:6px">the one that needs real saving. spring or autumn.</p>
+    </div>
+  </div>
+</section>
+
+<!-- POEMS -->
+<section class="section" id="poems">
+  <div class="eyebrow" style="color:var(--rose)">verses</div>
+  <h1 class="title">the <em>verses</em>.</h1>
+  <p class="sub">words that needed somewhere to go.</p>
+
+  <div style="margin-bottom:28px;padding:18px 22px;background:var(--bg-2);border:1px solid var(--line);border-radius:10px;border-left:3px solid var(--plum)">
+    <div style="font-family:var(--mono);font-size:0.7rem;color:var(--plum);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:6px">collected works</div>
+    <p style="color:var(--ink-dim);font-size:0.9rem;line-height:1.6">36 poems written between 2012 and 2022. a few of the ones that still hit live below. the rest are safe in the archive.</p>
+  </div>
+
+  <div id="poems-list">
+
+    <div class="entry" style="border-left:3px solid var(--plum)">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:6px;flex-wrap:wrap">
+        <h2 style="font-family:var(--serif);font-style:italic;font-size:1.5rem;font-weight:500;color:var(--ink);margin:0;letter-spacing:-0.01em">I'll Always Be Here</h2>
+        <span class="date" style="margin:0">collected works · for dandan</span>
+      </div>
+      <div class="body" style="font-family:var(--serif);font-size:1.02rem;line-height:1.85;color:var(--ink);margin-top:14px">Your little hand on my nose
+The other is pulling me close
+I'm holding back my tears
+Just thinking of all the years
+
+And I know this won't last
+Cause time is moving too fast
+But we can stay right here
+For a while, my dear
+
+You'll grow up and live your life
+Go to school and learn to drive
+Time will push you away
+But know that I'll always stay
+
+Even though they'll break your heart
+Call me up and we'll bandage your scar
+I'll kiss your nose and whisper in your ear
+<em>Mama will always be here…</em></div>
+    </div>
+
+    <div class="entry" style="border-left:3px solid var(--rose)">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:6px;flex-wrap:wrap">
+        <h2 style="font-family:var(--serif);font-style:italic;font-size:1.5rem;font-weight:500;color:var(--ink);margin:0;letter-spacing:-0.01em">I am enough.</h2>
+        <span class="date" style="margin:0">collected works</span>
+      </div>
+      <div class="body" style="font-family:var(--serif);font-size:1.02rem;line-height:1.85;color:var(--ink);margin-top:14px">I am enough.
+I will be enough.
+It's sad you couldn't see that.
+It's sad you couldn't see what I was.
+
+I'm not a waste.
+I'm not just a phase.
+I'm everything.
+And someday you'll realize that.
+<em>But I'm not gonna be there for you anymore.</em></div>
+    </div>
+
+    <div class="entry" style="border-left:3px solid var(--rose)">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:6px;flex-wrap:wrap">
+        <h2 style="font-family:var(--serif);font-style:italic;font-size:1.5rem;font-weight:500;color:var(--ink);margin:0;letter-spacing:-0.01em">i'm not sorry</h2>
+        <span class="date" style="margin:0">collected works</span>
+      </div>
+      <div class="body" style="font-family:var(--serif);font-size:1.02rem;line-height:1.85;color:var(--ink);margin-top:14px">you don't love me
+you never did.
+you used me and i let you..
+because i love you.
+
+i loved you even when you weren't there for me.
+i loved you even when you cheated on me.
+i loved you even when you compared me to her.
+i loved you even when you left me alone.
+i loved you even when you told me i wasn't enough.
+i loved you even when you broke my heart.
+i loved you even when you lied.
+i loved you even when you showed me you didn't.
+
+i loved you but now i'm exhausted.
+i can't love you anymore
+i don't have love to give you anymore.
+i can't love you anymore
+i don't even love myself anymore.
+
+so i'm sorry if i left you on seen
+i'm sorry if i can't respond to your messages.
+i'm sorry if i can't forgive you.
+i'm sorry if i can't see you again.
+i'm sorry if i can't be with you.
+i'm sorry if i can't accept you now.
+
+but then...
+<em>i'm not sorry anymore.</em></div>
+    </div>
+
+    <div class="entry" style="border-left:3px solid var(--rose)">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:10px;flex-wrap:wrap">
+        <h2 style="font-family:var(--serif);font-style:italic;font-size:1.6rem;font-weight:500;color:var(--ink);margin:0;letter-spacing:-0.01em">Fortress</h2>
+        <span class="date" style="margin:0">Jun 19, 2026 · Fri</span>
+      </div>
+      <div style="font-family:var(--mono);font-size:0.7rem;color:var(--ink-mute);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:18px">written by kat · taylor swift vibes · capo 4</div>
+      <div class="body" style="font-family:var(--serif);font-size:1.02rem;line-height:1.85;color:var(--ink)"><span style="font-family:var(--mono);font-size:0.7rem;color:var(--teal);letter-spacing:0.15em;text-transform:uppercase">Verse 1</span>
+I learned to build these walls so young
+Brick by brick until the sun went down
+Everyone who knocked just wanted in
+To take whatever warmth that I had found
+
+<span style="font-family:var(--mono);font-size:0.7rem;color:var(--teal);letter-spacing:0.15em;text-transform:uppercase">Pre-Chorus</span>
+And I'm so good at holding still
+While everything around me falls
+
+<span style="font-family:var(--mono);font-size:0.7rem;color:var(--ember);letter-spacing:0.15em;text-transform:uppercase">Chorus</span>
+I'm the one they lean on but I don't lean back
+I'm the keeper of a hundred cracks
+And I smile through the weight of it all
+A fortress who's waiting for the walls to fall
+
+<span style="font-family:var(--mono);font-size:0.7rem;color:var(--teal);letter-spacing:0.15em;text-transform:uppercase">Verse 2</span>
+You showed up like you could read my mind
+Saw the parts I never let them see
+But feelings without action are just lies
+And potential's not the same as choosing me
+
+<span style="font-family:var(--mono);font-size:0.7rem;color:var(--teal);letter-spacing:0.15em;text-transform:uppercase">Pre-Chorus</span>
+I know better than to wait around
+For someone scared to make the call
+
+<span style="font-family:var(--mono);font-size:0.7rem;color:var(--ember);letter-spacing:0.15em;text-transform:uppercase">Chorus</span>
+I'm the one they lean on but I don't lean back
+I'm the keeper of a hundred cracks
+And I smile through the weight of it all
+A fortress who's waiting for the walls to fall
+
+<span style="font-family:var(--mono);font-size:0.7rem;color:var(--plum);letter-spacing:0.15em;text-transform:uppercase">Bridge</span>
+Maybe I was taught that love means sacrifice
+So the quiet ones don't feel like love at all
+Maybe I'm the reason that I'm still alone
+Building something no one asked me for
+
+<span style="font-family:var(--mono);font-size:0.7rem;color:var(--ember);letter-spacing:0.15em;text-transform:uppercase">Final Chorus</span>
+But what if I could lean and not collapse
+What if someone held me through the cracks
+What if I don't have to be so tall
+What if someone had the key after all
+
+<span style="font-family:var(--mono);font-size:0.7rem;color:var(--rose);letter-spacing:0.15em;text-transform:uppercase">Outro</span>
+<em>A fortress... waiting for the walls to fall</em></div>
+    </div>
+  </div>
+
+  <form id="poems-form" style="margin-top:24px">
+    <textarea id="poems-input" placeholder="a line, a stanza, a whole one... no editing required."></textarea>
+    <button type="submit" style="margin-top:10px;padding:10px 20px;background:var(--rose);color:var(--bg);border-radius:6px;font-weight:600;font-family:var(--mono);font-size:0.8rem;letter-spacing:0.1em;text-transform:uppercase">save poem</button>
+  </form>
+</section>
+
+<div class="footer-note">built by <span>kat</span> · for karen only · last updated jun 19, 2026</div>
+
+</main>
+</div>
+
+<script>
+// tab nav
+const buttons = document.querySelectorAll('.nav-btn');
+const sections = document.querySelectorAll('.section');
+buttons.forEach(b => b.addEventListener('click', () => {
+  buttons.forEach(x => x.classList.remove('active'));
+  sections.forEach(s => s.classList.remove('active'));
+  b.classList.add('active');
+  document.getElementById(b.dataset.tab).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}));
+
+// journal entries (localStorage)
+const KEY = 'karen-journal';
+const list = document.getElementById('journal-list');
+const form = document.getElementById('journal-form');
+const input = document.getElementById('journal-input');
+
+function loadEntries(){
+  const saved = JSON.parse(localStorage.getItem(KEY) || '[]');
+  saved.forEach(e => prependEntry(e.date, e.body));
+}
+function prependEntry(date, body){
+  const div = document.createElement('div');
+  div.className = 'entry';
+  div.innerHTML = `<div class="date">${date}</div><div class="body"></div>`;
+  div.querySelector('.body').textContent = body;
+  list.insertBefore(div, list.firstChild);
+}
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const body = input.value.trim();
+  if(!body) return;
+  const d = new Date();
+  const date = d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) + ' · ' + d.toLocaleDateString('en-US',{weekday:'short'});
+  prependEntry(date, body);
+  const saved = JSON.parse(localStorage.getItem(KEY) || '[]');
+  saved.push({date, body});
+  localStorage.setItem(KEY, JSON.stringify(saved));
+  input.value = '';
+});
+loadEntries();
+
+// job tracker status (localStorage)
+const JOB_KEY = 'karen-jobs';
+const jobSelects = document.querySelectorAll('.job-status');
+
+function loadJobStatuses(){
+  const saved = JSON.parse(localStorage.getItem(JOB_KEY) || '{}');
+  jobSelects.forEach(sel => {
+    const jobId = sel.dataset.job;
+    if(saved[jobId]) sel.value = saved[jobId];
+    updateJobStyle(sel);
+  });
+}
+
+function updateJobStyle(sel){
+  const item = sel.closest('.job-item');
+  item.className = 'job-item';
+  if(sel.value === 'skip') item.style.opacity = '0.4';
+  else item.style.opacity = '1';
+}
+
+jobSelects.forEach(sel => {
+  sel.addEventListener('change', () => {
+    const saved = JSON.parse(localStorage.getItem(JOB_KEY) || '{}');
+    saved[sel.dataset.job] = sel.value;
+    localStorage.setItem(JOB_KEY, JSON.stringify(saved));
+    updateJobStyle(sel);
+  });
+});
+
+loadJobStatuses();
+
+// work log entries (localStorage)
+const WORK_KEY = 'karen-work';
+const workList = document.getElementById('work-list');
+const workForm = document.getElementById('work-form');
+const workInput = document.getElementById('work-input');
+
+function loadWorkEntries(){
+  const saved = JSON.parse(localStorage.getItem(WORK_KEY) || '[]');
+  saved.forEach(e => prependWorkEntry(e.date, e.body));
+}
+function prependWorkEntry(date, body){
+  const div = document.createElement('div');
+  div.className = 'work-entry';
+  div.innerHTML = `<div class="date">${date}</div><div class="body"></div>`;
+  div.querySelector('.body').textContent = body;
+  workList.insertBefore(div, workList.firstChild);
+}
+workForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const body = workInput.value.trim();
+  if(!body) return;
+  const d = new Date();
+  const date = d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) + ' · ' + d.toLocaleDateString('en-US',{weekday:'short'});
+  prependWorkEntry(date, body);
+  const saved = JSON.parse(localStorage.getItem(WORK_KEY) || '[]');
+  saved.push({date, body});
+  localStorage.setItem(WORK_KEY, JSON.stringify(saved));
+  workInput.value = '';
+});
+loadWorkEntries();
+
+// poem entries (localStorage)
+const POEMS_KEY = 'karen-poems';
+const poemsList = document.getElementById('poems-list');
+const poemsForm = document.getElementById('poems-form');
+const poemsInput = document.getElementById('poems-input');
+
+function loadPoems(){
+  const saved = JSON.parse(localStorage.getItem(POEMS_KEY) || '[]');
+  saved.forEach(e => prependPoem(e.date, e.body));
+}
+function prependPoem(date, body){
+  const div = document.createElement('div');
+  div.className = 'entry';
+  div.style.borderLeft = '3px solid var(--rose)';
+  div.innerHTML = `<div class="date"></div><div class="body" style="font-family:var(--serif);font-size:1.05rem;line-height:1.7"></div>`;
+  div.querySelector('.date').textContent = date;
+  div.querySelector('.body').textContent = body;
+  poemsList.insertBefore(div, poemsList.firstChild);
+}
+poemsForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const body = poemsInput.value.trim();
+  if(!body) return;
+  const saved = JSON.parse(localStorage.getItem(POEMS_KEY) || '[]');
+  const d = new Date();
+  const date = d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) + ' · ' + d.toLocaleDateString('en-US',{weekday:'short'});
+  prependPoem(date, body);
+  saved.push({date, body});
+  localStorage.setItem(POEMS_KEY, JSON.stringify(saved));
+  poemsInput.value = '';
+});
+loadPoems();
+
+// collapsible sections
+function toggleCollapsible(id){
+  const el = document.getElementById(id);
+  el.classList.toggle('open');
+  // save state
+  const states = JSON.parse(localStorage.getItem('karen-collapsible') || '{}');
+  states[id] = el.classList.contains('open');
+  localStorage.setItem('karen-collapsible', JSON.stringify(states));
+}
+
+// restore collapsible states
+(function(){
+  const states = JSON.parse(localStorage.getItem('karen-collapsible') || '{}');
+  Object.keys(states).forEach(id => {
+    const el = document.getElementById(id);
+    if(el){
+      if(states[id]) el.classList.add('open');
+      else el.classList.remove('open');
+    }
+  });
+})();
+</script>
+</body>
+</html>
