@@ -1,0 +1,117 @@
+<!-- FINANCES -->
+<section class="section" id="finances">
+  <div class="eyebrow">the ledger</div>
+  <h1 class="title">every peso, <em>accounted</em>.</h1>
+
+  <div class="strip">
+    <div class="stat lead">
+      <div class="k">Free cash</div>
+      <div class="v" id="fin-free">—</div>
+      <div class="s" id="fin-free-note">per month, after everything</div>
+    </div>
+    <div class="stat">
+      <div class="k">Money in</div>
+      <div class="v" id="fin-income">—</div>
+      <div class="s" id="fin-income-note">—</div>
+    </div>
+    <div class="stat">
+      <div class="k">Committed out</div>
+      <div class="v" id="fin-fixed">—</div>
+      <div class="s" id="fin-fixed-note">—</div>
+    </div>
+    <div class="stat">
+      <div class="k">Renovation</div>
+      <div class="v" id="fin-goal-pct">—</div>
+      <div class="s" id="fin-goal-note">—</div>
+    </div>
+  </div>
+
+  <div class="due-wrap">
+    <div class="due-head">
+      <h2>due soon</h2>
+      <div class="due-total" id="due-total">—</div>
+    </div>
+    <div class="due-list" id="due-list"></div>
+    <div class="due-later" id="due-later"></div>
+    <p class="due-flag">car loan is the only confirmed date. <b>date?</b> means i guessed. <button class="linkish" id="due-edit-toggle">edit due dates</button></p>
+    <div class="due-edit" id="due-edit"></div>
+  </div>
+
+  <div class="rule"><span class="n">— 01</span><h2>this paycheck</h2></div>
+  <div class="pay">
+    <div class="pay-head">
+      <div class="pay-in">
+        <div class="field" style="flex:0 0 168px"><label for="pay-next">Next payday</label><input type="date" id="pay-next"></div>
+        <div class="field" style="flex:0 0 172px"><label for="pay-mode">Paid</label>
+          <select id="pay-mode">
+            <option value="biweekly">every 2 weeks · 26/yr</option>
+            <option value="semimonthly">twice a month · 24/yr</option>
+          </select>
+        </div>
+        <div class="field" style="flex:0 0 150px"><label for="pay-income">Monthly income ₱</label><input type="number" id="pay-income" step="1000" min="0" inputmode="numeric"></div>
+      </div>
+      <div style="text-align:right">
+        <div class="label" style="margin:0">Each payday</div>
+        <div style="font-family:var(--serif);font-size:1.9rem;line-height:1.1" id="pay-per">—</div>
+      </div>
+    </div>
+    <div id="pay-periods"></div>
+  </div>
+
+  <div class="rule"><span class="n">— 02</span><h2>the renovation fund</h2></div>
+  {{SAV}}
+
+  <details class="fold" id="fold-sim">
+    <summary><span>simulator &amp; the floor</span><span class="hint">what if <span class="chev">›</span></span></summary>
+    <div class="body">{{SIM}}</div>
+  </details>
+
+  <div class="rule"><span class="n">— 03</span><h2>the fixed stuff</h2></div>
+  <details class="fold" id="fold-exp" open>
+    <summary><span>fixed expenses</span><span class="hint"><span id="exp-count">—</span> lines <span class="chev">›</span></span></summary>
+    <div class="body">
+      <div class="expenses-list" id="exp-list"></div>
+      <div class="ledger-total"><b>Total out</b><b id="exp-total">—</b></div>
+      <p class="note" style="margin-top:12px;font-size:0.79rem" id="exp-flag"></p>
+    </div>
+  </details>
+
+  <details class="fold" id="fold-spend">
+    <summary><span>spend log</span><span class="hint"><span id="spend-count">0</span> this month <span class="chev">›</span></span></summary>
+    <div class="body">
+      <div id="spend-list"></div>
+      <p class="note" style="margin-top:12px;font-size:0.79rem">this month: <b id="spend-total" style="font-family:var(--mono);color:var(--rose)">₱0</b></p>
+    </div>
+  </details>
+
+  <details class="fold" id="fold-acct">
+    <summary><span>accounts &amp; the rule</span><span class="hint">three banks <span class="chev">›</span></span></summary>
+    <div class="body">
+      <div class="grid grid-2">
+        <div>
+          <div style="margin-bottom:16px">
+            <div style="display:flex;justify-content:space-between;gap:10px"><strong>BPI</strong><span style="font-family:var(--mono);font-size:0.78rem;color:var(--ink-dim)">auto-debit</span></div>
+            <div class="note">car loan auto-debit, 7th</div>
+          </div>
+          <div style="margin-bottom:16px">
+            <div style="display:flex;justify-content:space-between;gap:10px"><strong>GoTyme</strong><span style="font-family:var(--mono);font-size:0.78rem;color:var(--ink-dim)">daily</span></div>
+            <div class="note">daily spending</div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;gap:10px"><strong>Maribank</strong><span style="font-family:var(--mono);font-size:0.78rem;color:var(--teal)">untouchable</span></div>
+            <div class="note">renovation money</div>
+          </div>
+        </div>
+        <div>
+          <h3>the rule</h3>
+          <p style="color:var(--ink-dim);line-height:1.75;font-size:0.92rem">payday lands, savings goes out <em>first</em>. what stays in GoTyme is the real budget.</p>
+          <div style="margin-top:12px"><span class="chip ember">pay yourself first</span><span class="chip teal">₱219k target</span></div>
+          <h3 style="margin-top:20px">stretch goal</h3>
+          <p class="note">full build runs to ₱489,000.</p>
+          <div class="bar"><div class="bar-fill" id="stretch-bar" style="width:4%"></div></div>
+          <div style="display:flex;justify-content:space-between;margin-top:7px;font-family:var(--mono);font-size:0.7rem;color:var(--ink-mute)"><span id="stretch-label">—</span><span>₱489,000</span></div>
+        </div>
+      </div>
+    </div>
+  </details>
+</section>
