@@ -713,7 +713,7 @@ input[type=range].slider::-moz-range-thumb{
 .hero-stats .v{font-family:var(--serif);font-size:1.32rem;margin-top:3px;line-height:1.15;font-variant-numeric:tabular-nums}
 
 /* ————— search ————— */
-.search{position:relative;margin-bottom:14px}
+.search{position:relative;z-index:60;margin-bottom:14px}
 .search .ico{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:var(--ink-mute);font-size:0.95rem;pointer-events:none}
 .search input{padding-left:40px;border-radius:13px;background:var(--bg-2);height:46px}
 .search input::placeholder{color:var(--ink-mute)}
@@ -731,7 +731,7 @@ input[type=range].slider::-moz-range-thumb{
 .results .none{padding:14px 15px;color:var(--ink-dim);font-size:0.88rem}
 
 /* ————— filter chips ————— */
-.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:16px;scrollbar-width:none}
+.chips{position:relative;z-index:1;display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:16px;scrollbar-width:none}
 .chips::-webkit-scrollbar{display:none}
 .chips button{
   flex:none;padding:7px 15px;border-radius:99px;border:1px solid var(--line-2);
@@ -5557,8 +5557,8 @@ window.animNum = (function(){
   };
   function open(m){
     mode = m; panel.style.display = 'block';
-    $('qa-title').textContent = cfg[m].title;
-    $('qa-hint').textContent = cfg[m].hint;
+    if($('qa-title')) $('qa-title').textContent = cfg[m].title;
+    if($('qa-hint')) $('qa-hint').textContent = cfg[m].hint;
     $('qa-note').parentElement.style.display = cfg[m].note ? '' : 'none';
     $('qa-amt').value = ''; $('qa-note').value = '';
     $('qa-amt').focus();
