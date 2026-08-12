@@ -208,6 +208,36 @@ input[type=range].slider::-moz-range-thumb{
 .scn .t{font-family:var(--serif);font-size:1.5rem;font-weight:300;line-height:1.1;margin-top:6px}
 .scn .d{font-size:0.72rem;color:var(--ink-dim);margin-top:2px}
 
+
+/* minimum floor */
+.floor-block{margin-top:28px;padding-top:24px;border-top:1px solid var(--line)}
+.floor-eyebrow{font-family:var(--mono);font-size:0.62rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--ember);margin-bottom:8px}
+.floor-compare{display:grid;grid-template-columns:1fr auto 1fr;gap:14px;align-items:stretch;margin-top:20px}
+.fc{padding:18px;border-radius:12px;border:1px solid var(--line);background:var(--bg-3);position:relative;overflow:hidden}
+.fc.floor{border-left:3px solid var(--ember)}
+.fc.push{border-left:3px solid var(--teal);background:
+  radial-gradient(ellipse 80% 100% at 100% 0%, rgba(95,212,180,0.10), transparent 70%), var(--bg-3)}
+.fc .cap{font-family:var(--mono);font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--ink-mute)}
+.fc .rate{font-family:var(--mono);font-size:0.85rem;margin-top:6px;color:var(--ink-dim)}
+.fc .when{font-family:var(--serif);font-weight:300;font-size:2.1rem;letter-spacing:-0.025em;line-height:1.1;margin-top:10px}
+.fc.floor .when{color:var(--ember)}
+.fc.push .when{color:var(--teal)}
+.fc .meta{font-size:0.78rem;color:var(--ink-dim);margin-top:4px}
+.fc-mid{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-width:96px}
+.fc-mid .arrow{font-family:var(--mono);font-size:0.72rem;color:var(--ink-mute);letter-spacing:0.18em}
+.fc-mid .gain{font-family:var(--serif);font-size:1.5rem;font-weight:300;color:var(--teal);line-height:1;text-align:center}
+.fc-mid .gain small{display:block;font-family:var(--mono);font-size:0.55rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--ink-mute);margin-top:5px}
+.floor-note{margin-top:16px;padding:14px 16px;border-radius:10px;background:rgba(255,122,69,0.06);border:1px dashed #7a4530;font-family:var(--serif);font-style:italic;font-size:1.05rem;line-height:1.5}
+.floor-note b{font-style:normal;font-family:var(--sans);font-weight:700;color:var(--ember)}
+.linkish{font-family:var(--mono);font-size:0.65rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--teal);border-bottom:1px dotted var(--teal-dim);padding:0}
+.linkish:hover{color:var(--ink)}
+@media (max-width:820px){
+  .floor-compare{grid-template-columns:1fr}
+  .fc-mid{flex-direction:row;min-width:0;padding:4px 0}
+  .fc-mid .arrow{display:none}
+  .fc-mid .gain small{display:inline;margin-left:8px}
+}
+
 .expense-row.sav-row{border-bottom:1px solid var(--line)}
 .expense-row.sav-row span:first-child{color:var(--teal)}
 .expense-row.sav-row .amt{color:var(--teal);font-weight:500}
@@ -465,6 +495,42 @@ input[type=range].slider::-moz-range-thumb{
     <div class="slider-ends"><span>₱2,000</span><span>₱40,000 / MO</span></div>
     <div class="scenarios" id="scenarios"></div>
     <p class="note" style="margin-top:14px;font-size:0.78rem">tap a scenario to lock it in as your monthly commitment.</p>
+    <div class="floor-block">
+      <div class="floor-eyebrow">the floor</div>
+      <h2 style="margin-bottom:6px">the amount you never skip</h2>
+      <p class="note" style="margin-bottom:2px">pick a number small enough that a bad month can't break it. transfer it every payday, no negotiating. everything above the floor is a bonus that buys back time.</p>
+      <div class="sav-inputs">
+        <div class="field">
+          <label for="in-floor">Minimum per payday</label>
+          <input type="number" id="in-floor" step="500" min="0">
+        </div>
+        <div class="field">
+          <label for="in-avg">Realistic average per payday</label>
+          <input type="number" id="in-avg" step="500" min="0">
+        </div>
+      </div>
+      <div class="floor-compare">
+        <div class="fc floor">
+          <div class="cap">floor only · worst case</div>
+          <div class="rate" id="fl-rate">—</div>
+          <div class="when" id="fl-date">—</div>
+          <div class="meta" id="fl-meta">—</div>
+        </div>
+        <div class="fc-mid">
+          <div class="arrow">— — —</div>
+          <div class="gain" id="fl-gain">—<small>sooner</small></div>
+          <div class="arrow">— — —</div>
+        </div>
+        <div class="fc push">
+          <div class="cap">when you can push</div>
+          <div class="rate" id="pu-rate">—</div>
+          <div class="when" id="pu-date">—</div>
+          <div class="meta" id="pu-meta">—</div>
+        </div>
+      </div>
+      <div class="floor-note" id="floor-note">—</div>
+      <p class="note" style="margin-top:12px;font-size:0.78rem">paydays counted every 2 weeks, 26 a year. <button class="linkish" id="floor-apply">set the floor as my monthly commitment</button></p>
+    </div>
   </div>
 
   <div class="grid grid-2">
@@ -3679,7 +3745,9 @@ function toggleCollapsible(id){
     try { s = JSON.parse(localStorage.getItem(SAV_KEY) || '{}'); } catch(e){ s = {}; }
     return {
       saved: Number.isFinite(+s.saved) && s.saved !== null && s.saved !== undefined ? Math.max(0, +s.saved) : 18000,
-      monthly: Number.isFinite(+s.monthly) && s.monthly ? Math.max(0, +s.monthly) : 15000
+      monthly: Number.isFinite(+s.monthly) && s.monthly ? Math.max(0, +s.monthly) : 15000,
+      floor: Number.isFinite(+s.floor) && s.floor ? Math.max(0, +s.floor) : 5000,
+      avg: Number.isFinite(+s.avg) && s.avg ? Math.max(0, +s.avg) : 10000
     };
   }
   function save(st){ localStorage.setItem(SAV_KEY, JSON.stringify(st)); }
@@ -3698,6 +3766,24 @@ function toggleCollapsible(id){
     return {months, weeks, date:d};
   }
   const fmtDate = d => d ? MON[d.getMonth()] + ' ' + d.getFullYear() : 'never';
+
+  const PAYDAYS_PER_YEAR = 26;
+  function byPayday(per, remaining){
+    if(remaining <= 0) return {paydays:0, days:0, date:new Date(), monthly:per * PAYDAYS_PER_YEAR / 12};
+    if(!per || per <= 0) return {paydays:Infinity, days:Infinity, date:null, monthly:0};
+    const paydays = Math.ceil(remaining / per);
+    const days = paydays * 14;
+    const d = new Date(); d.setDate(d.getDate() + days);
+    return {paydays, days, date:d, monthly: per * PAYDAYS_PER_YEAR / 12};
+  }
+  function dur(days){
+    if(!isFinite(days)) return 'forever';
+    const m = Math.round(days / 30.44);
+    if(m < 1) return 'this month';
+    if(m < 12) return m + ' months';
+    const y = Math.floor(m / 12), r = m % 12;
+    return y + (y > 1 ? ' yrs' : ' yr') + (r ? ' ' + r + ' mo' : '');
+  }
 
   const SCENARIOS = [8000, 12000, 15000, 20000];
 
@@ -3769,6 +3855,8 @@ function toggleCollapsible(id){
     sl.style.setProperty('--p', ((sl.value - sl.min) / (sl.max - sl.min) * 100) + '%');
     renderSim(+sl.value, remaining);
 
+    renderFloor(remaining);
+
     // scenarios
     $('scenarios').innerHTML = SCENARIOS.map(m => {
       const s = project(m, remaining);
@@ -3782,6 +3870,45 @@ function toggleCollapsible(id){
     });
   }
 
+  function renderFloor(remaining){
+    const floor = state.floor, avg = state.avg;
+    const f = byPayday(floor, remaining), u = byPayday(avg, remaining);
+
+    $('fl-rate').textContent = peso(floor) + ' / payday · ' + peso(f.monthly) + ' a month';
+    $('pu-rate').textContent = peso(avg) + ' / payday · ' + peso(u.monthly) + ' a month';
+
+    if(remaining <= 0){
+      $('fl-date').textContent = $('pu-date').textContent = 'funded';
+      $('fl-meta').textContent = $('pu-meta').textContent = 'nothing left to save';
+      $('fl-gain').innerHTML = '✓<small>done</small>';
+      $('floor-note').innerHTML = 'the floor did its job. <b>₱219,000</b> is in the bank.';
+      return;
+    }
+
+    $('fl-date').textContent = fmtDate(f.date);
+    $('fl-meta').textContent = isFinite(f.paydays) ? f.paydays + ' paydays · ' + dur(f.days) : 'set a floor above zero';
+    $('pu-date').textContent = fmtDate(u.date);
+    $('pu-meta').textContent = isFinite(u.paydays) ? u.paydays + ' paydays · ' + dur(u.days) : 'set an average above zero';
+
+    const gainDays = (isFinite(f.days) && isFinite(u.days)) ? f.days - u.days : NaN;
+    if(isFinite(gainDays) && gainDays > 0){
+      $('fl-gain').innerHTML = dur(gainDays).replace(' months','mo').replace(' month','mo') + '<small>sooner</small>';
+    } else {
+      $('fl-gain').innerHTML = '—<small>no gain</small>';
+    }
+
+    if(!floor){
+      $('floor-note').innerHTML = 'a floor of zero is not a floor. pick the smallest number you could still transfer during your worst month.';
+    } else if(avg <= floor){
+      $('floor-note').innerHTML = 'your average is not above your floor yet, so the floor <em>is</em> the plan: <b>' + fmtDate(f.date) +
+        '</b>. raise the average number to see what pushing extra buys you.';
+    } else {
+      $('floor-note').innerHTML = 'never skipping <b>' + peso(floor) + ' a payday</b> alone gets you there by <b>' + fmtDate(f.date) +
+        '</b>. finding <b>' + peso(avg - floor) + ' more</b> when the month allows pulls it to <b>' + fmtDate(u.date) +
+        '</b>, which is ' + dur(gainDays) + ' of your life back.';
+    }
+  }
+
   function renderSim(m, remaining){
     const s = project(m, remaining);
     if(remaining <= 0){ $('sim-read').innerHTML = 'already funded.'; return; }
@@ -3793,6 +3920,8 @@ function toggleCollapsible(id){
   function syncInputs(){
     $('in-saved').value = state.saved;
     $('in-monthly').value = state.monthly;
+    $('in-floor').value = state.floor;
+    $('in-avg').value = state.avg;
   }
 
   $('in-saved').addEventListener('input', e => {
@@ -3800,6 +3929,15 @@ function toggleCollapsible(id){
   });
   $('in-monthly').addEventListener('input', e => {
     state.monthly = Math.max(0, +e.target.value || 0); save(state); render();
+  });
+  $('in-floor').addEventListener('input', e => {
+    state.floor = Math.max(0, +e.target.value || 0); save(state); render();
+  });
+  $('in-avg').addEventListener('input', e => {
+    state.avg = Math.max(0, +e.target.value || 0); save(state); render();
+  });
+  $('floor-apply').addEventListener('click', () => {
+    state.monthly = Math.round(state.floor * PAYDAYS_PER_YEAR / 12); save(state); syncInputs(); render();
   });
   document.querySelectorAll('.quick button').forEach(b => {
     b.addEventListener('click', () => {
