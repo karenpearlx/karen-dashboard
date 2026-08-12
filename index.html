@@ -107,6 +107,117 @@ h3{font-family:var(--sans);font-weight:600;font-size:0.95rem;color:var(--ink);ma
 .bar{height:6px;background:var(--bg-3);border-radius:3px;overflow:hidden;margin-top:10px}
 .bar-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--teal-dim));border-radius:3px;transition:width 0.6s ease}
 
+/* savings module */
+.sav-hero{
+  position:relative;overflow:hidden;
+  background:
+    radial-gradient(ellipse 60% 120% at 100% 0%, rgba(95,212,180,0.10), transparent 65%),
+    radial-gradient(ellipse 50% 100% at 0% 100%, rgba(255,122,69,0.07), transparent 60%),
+    var(--bg-2);
+  border:1px solid var(--line);border-radius:14px;padding:28px 28px 24px;
+}
+.sav-hero::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background-image:linear-gradient(var(--line) 1px,transparent 1px);
+  background-size:100% 28px;opacity:0.13;
+  -webkit-mask-image:linear-gradient(180deg,#000,transparent 70%);
+          mask-image:linear-gradient(180deg,#000,transparent 70%);
+}
+.sav-hero > *{position:relative;z-index:1}
+.sav-top{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap}
+.sav-amount{font-family:var(--serif);font-weight:300;font-size:3.4rem;letter-spacing:-0.035em;line-height:1;color:var(--teal)}
+.sav-amount .of{font-size:1.05rem;color:var(--ink-mute);letter-spacing:0;font-family:var(--mono);margin-left:8px}
+.sav-pct{font-family:var(--serif);font-weight:300;font-size:2.6rem;line-height:1;letter-spacing:-0.03em;text-align:right}
+.sav-pct small{display:block;font-family:var(--mono);font-size:0.62rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--ink-mute);margin-top:6px}
+
+.rail{position:relative;margin:26px 0 10px;height:14px;border-radius:99px;background:var(--bg-3);border:1px solid var(--line);overflow:hidden}
+.rail-fill{
+  position:absolute;inset:1px auto 1px 1px;height:calc(100% - 2px);
+  border-radius:99px;width:0;
+  background:linear-gradient(90deg,var(--teal-dim),var(--teal));
+  box-shadow:0 0 18px rgba(95,212,180,0.35);
+  transition:width 0.9s cubic-bezier(.22,1,.36,1);
+}
+.rail-fill::after{
+  content:"";position:absolute;inset:0;border-radius:99px;
+  background:repeating-linear-gradient(115deg,rgba(255,255,255,0.10) 0 8px,transparent 8px 18px);
+}
+.rail-tick{position:absolute;top:0;bottom:0;width:1px;background:var(--line-2);z-index:2}
+.sav-ticks{position:relative;height:16px;font-family:var(--mono);font-size:0.6rem;color:var(--ink-mute);letter-spacing:0.14em}
+.sav-ticks span{position:absolute;transform:translateX(-50%);transition:color 0.3s}
+.sav-ticks span.hit{color:var(--teal)}
+
+.sav-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;margin-top:22px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.sav-stat{background:var(--bg-2);padding:14px 16px}
+.sav-stat .k{font-family:var(--mono);font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--ink-mute)}
+.sav-stat .v{font-family:var(--serif);font-size:1.45rem;font-weight:300;letter-spacing:-0.02em;margin-top:4px}
+.sav-stat .v.teal{color:var(--teal)}
+.sav-stat .v.ember{color:var(--ember)}
+.sav-stat .s{font-size:0.75rem;color:var(--ink-dim);margin-top:2px}
+
+.sav-ask{
+  margin-top:20px;padding:16px 18px;border-radius:10px;
+  border:1px dashed var(--teal-dim);background:rgba(95,212,180,0.05);
+  font-family:var(--serif);font-size:1.15rem;font-style:italic;color:var(--ink);line-height:1.5;
+}
+.sav-ask b{font-style:normal;font-family:var(--sans);font-weight:700;color:var(--teal)}
+.sav-ask .tiny{display:block;font-family:var(--mono);font-style:normal;font-size:0.68rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--ink-mute);margin-top:8px}
+
+.sav-inputs{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-top:20px}
+.field{flex:1;min-width:150px}
+.field label{display:block;font-family:var(--mono);font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--ink-mute);margin-bottom:6px}
+.field input{font-family:var(--mono)}
+.quick{display:flex;gap:6px}
+.quick button{
+  font-family:var(--mono);font-size:0.7rem;padding:8px 11px;border-radius:6px;
+  border:1px solid var(--line-2);color:var(--ink-dim);transition:all 0.18s;
+}
+.quick button:hover{border-color:var(--teal-dim);color:var(--teal);background:rgba(95,212,180,0.07)}
+.quick button:active{transform:translateY(1px)}
+
+/* simulator */
+.sim-read{font-family:var(--serif);font-weight:300;font-size:1.7rem;letter-spacing:-0.02em;line-height:1.3}
+.sim-read b{font-weight:500;color:var(--teal);font-style:normal}
+.sim-read .dt{color:var(--ember)}
+input[type=range].slider{
+  -webkit-appearance:none;appearance:none;width:100%;height:4px;padding:0;border:none;
+  background:linear-gradient(90deg,var(--teal) var(--p,40%),var(--bg-3) var(--p,40%));
+  border-radius:99px;margin:18px 0 6px;cursor:pointer;
+}
+input[type=range].slider::-webkit-slider-thumb{
+  -webkit-appearance:none;width:20px;height:20px;border-radius:50%;
+  background:var(--bg);border:2px solid var(--teal);box-shadow:0 0 0 4px rgba(95,212,180,0.14);
+  transition:transform 0.15s;
+}
+input[type=range].slider::-webkit-slider-thumb:hover{transform:scale(1.12)}
+input[type=range].slider::-moz-range-thumb{
+  width:18px;height:18px;border-radius:50%;background:var(--bg);border:2px solid var(--teal);
+  box-shadow:0 0 0 4px rgba(95,212,180,0.14);
+}
+.slider-ends{display:flex;justify-content:space-between;font-family:var(--mono);font-size:0.62rem;color:var(--ink-mute);letter-spacing:0.14em}
+
+.scenarios{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:20px}
+.scn{
+  text-align:left;padding:14px 12px;border-radius:10px;border:1px solid var(--line);
+  background:var(--bg-3);transition:all 0.2s;cursor:pointer;
+}
+.scn:hover{border-color:var(--line-2);transform:translateY(-2px)}
+.scn.on{border-color:var(--teal-dim);background:rgba(95,212,180,0.07)}
+.scn .m{font-family:var(--mono);font-size:0.78rem;color:var(--ink)}
+.scn.on .m{color:var(--teal)}
+.scn .t{font-family:var(--serif);font-size:1.5rem;font-weight:300;line-height:1.1;margin-top:6px}
+.scn .d{font-size:0.72rem;color:var(--ink-dim);margin-top:2px}
+
+.expense-row.sav-row{border-bottom:1px solid var(--line)}
+.expense-row.sav-row span:first-child{color:var(--teal)}
+.expense-row.sav-row .amt{color:var(--teal);font-weight:500}
+
+@media (max-width:820px){
+  .sav-stats{grid-template-columns:repeat(2,1fr)}
+  .scenarios{grid-template-columns:repeat(2,1fr)}
+  .sav-amount{font-size:2.6rem}
+}
+
 /* books */
 .book{display:flex;gap:14px;padding:14px;background:var(--bg-3);border-radius:8px;border:1px solid var(--line);margin-bottom:8px}
 .book .cover{width:40px;height:60px;background:linear-gradient(135deg,var(--plum),var(--rose));border-radius:3px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-style:italic;color:rgba(255,255,255,0.7);font-size:1.2rem}
@@ -245,7 +356,7 @@ h3{font-family:var(--sans);font-weight:600;font-size:0.95rem;color:var(--ink);ma
   <p class="sub">a small, private corner for the things you carry. updated by kat as you go.</p>
 
   <div class="grid grid-3" style="margin-bottom:32px">
-    <div class="card"><div class="label">Monthly free</div><div class="big teal">₱58,589</div><div class="note">after fixed expenses</div></div>
+    <div class="card"><div class="label">Monthly free</div><div class="big teal" id="ov-free">₱58,589</div><div class="note" id="ov-free-note">after fixed expenses</div></div>
     <div class="card"><div class="label">Books read</div><div class="big">300<em style="font-style:italic;color:var(--ember)">+</em></div><div class="note">since 2012</div></div>
     <div class="card"><div class="label">Next salon</div><div class="big ember" style="font-size:1.5rem">Jul 25</div><div class="note">hair botox refresh</div></div>
   </div>
@@ -287,19 +398,80 @@ h3{font-family:var(--sans);font-weight:600;font-size:0.95rem;color:var(--ink);ma
 <section class="section" id="finances">
   <div class="eyebrow">numbers</div>
   <h1 class="title">the <em>ledger</em>.</h1>
-  <p class="sub">what comes in, what goes out, what stays.</p>
+  <p class="sub">what comes in, what goes out, what stays. savings is a bill now, not leftovers.</p>
 
   <div class="grid grid-4" style="margin-bottom:32px">
     <div class="card"><div class="label">Income</div><div class="big teal">₱120,000</div><div class="note">monthly · OGTool ($2,000 USD)</div></div>
-    <div class="card"><div class="label">Fixed expenses</div><div class="big">₱61,411</div></div>
-    <div class="card"><div class="label">Free cash</div><div class="big teal">₱58,589</div></div>
-    <div class="card"><div class="label">After Jul 2026</div><div class="big ember">₱30,589</div><div class="note">Shopee paid off</div></div>
+    <div class="card"><div class="label">Fixed expenses</div><div class="big" id="fin-fixed">₱61,411</div><div class="note" id="fin-fixed-note">incl. savings</div></div>
+    <div class="card"><div class="label">Free cash</div><div class="big teal" id="fin-free">₱58,589</div><div class="note">after everything</div></div>
+    <div class="card"><div class="label">Renovation</div><div class="big ember" id="fin-goal-pct">8%</div><div class="note" id="fin-goal-note">of ₱219,000 funded</div></div>
+  </div>
+
+  <div class="sav-hero" style="margin-bottom:24px">
+    <div class="sav-top">
+      <div>
+        <div class="label" style="font-family:var(--mono);font-size:0.65rem;text-transform:uppercase;letter-spacing:0.2em;color:var(--ink-mute);margin-bottom:10px">2nd floor extension · minimum build</div>
+        <div class="sav-amount"><span id="sav-saved">₱18,000</span><span class="of">of ₱219,000</span></div>
+      </div>
+      <div class="sav-pct"><span id="sav-pct">8%</span><small id="sav-milestone">just started</small></div>
+    </div>
+
+    <div class="rail">
+      <div class="rail-fill" id="rail-fill"></div>
+      <div class="rail-tick" style="left:25%"></div>
+      <div class="rail-tick" style="left:50%"></div>
+      <div class="rail-tick" style="left:75%"></div>
+    </div>
+    <div class="sav-ticks">
+      <span style="left:0;transform:none" id="tk-0">₱0</span>
+      <span style="left:25%" id="tk-25">54.7K</span>
+      <span style="left:50%" id="tk-50">109.5K</span>
+      <span style="left:75%" id="tk-75">164.2K</span>
+      <span style="right:0;left:auto;transform:none" id="tk-100">219K</span>
+    </div>
+
+    <div class="sav-ask" id="sav-ask">—</div>
+
+    <div class="sav-stats">
+      <div class="sav-stat"><div class="k">Still needed</div><div class="v ember" id="st-remaining">—</div></div>
+      <div class="sav-stat"><div class="k">Per week</div><div class="v teal" id="st-weekly">—</div><div class="s" id="st-daily">—</div></div>
+      <div class="sav-stat"><div class="k">Weeks left</div><div class="v" id="st-weeks">—</div><div class="s" id="st-months">—</div></div>
+      <div class="sav-stat"><div class="k">Done by</div><div class="v" id="st-date">—</div><div class="s">at current pace</div></div>
+    </div>
+
+    <div class="sav-inputs">
+      <div class="field">
+        <label for="in-saved">Saved so far</label>
+        <input type="number" id="in-saved" step="500" min="0">
+      </div>
+      <div class="field">
+        <label for="in-monthly">Committed monthly</label>
+        <input type="number" id="in-monthly" step="500" min="0">
+      </div>
+      <div class="quick">
+        <button data-add="1000">+1K</button>
+        <button data-add="5000">+5K</button>
+        <button data-add="10000">+10K</button>
+      </div>
+    </div>
+    <p class="note" style="margin-top:10px;font-size:0.78rem">saved locally on this device. log a deposit the day it lands, not the day you remember.</p>
+  </div>
+
+  <div class="card" style="margin-bottom:24px">
+    <h2>simulator</h2>
+    <p class="note" style="margin-bottom:6px">drag it. see what each peso buys you in time.</p>
+    <div class="sim-read" id="sim-read">—</div>
+    <input type="range" class="slider" id="sim-slider" min="2000" max="40000" step="500">
+    <div class="slider-ends"><span>₱2,000</span><span>₱40,000 / MO</span></div>
+    <div class="scenarios" id="scenarios"></div>
+    <p class="note" style="margin-top:14px;font-size:0.78rem">tap a scenario to lock it in as your monthly commitment.</p>
   </div>
 
   <div class="grid grid-2">
     <div class="card">
       <h2>fixed expenses</h2>
       <div class="expenses-list">
+        <div class="expense-row sav-row"><span>Savings (renovation)</span><span class="amt" id="row-savings">₱0</span></div>
         <div class="expense-row"><span>Car loan (BPI, 7th)</span><span class="amt bold">₱20,122</span></div>
         <div class="expense-row"><span>Electric bill</span><span class="amt">₱6,000</span></div>
         <div class="expense-row"><span>Mom's allowance</span><span class="amt">₱5,000</span></div>
@@ -315,6 +487,9 @@ h3{font-family:var(--sans);font-weight:600;font-size:0.95rem;color:var(--ink);ma
         <div class="expense-row"><span>Events buffer</span><span class="amt">₱1,500</span></div>
         <div class="expense-row"><span>Dandan extras</span><span class="amt">₱500</span></div>
       </div>
+      <div style="display:flex;justify-content:space-between;margin-top:16px;padding-top:14px;border-top:1px solid var(--line-2)">
+        <strong>Total out</strong><strong class="amt" id="row-total" style="font-family:var(--mono);color:var(--ember)">₱61,411</strong>
+      </div>
     </div>
     <div class="card">
       <h2>account split</h2>
@@ -328,13 +503,17 @@ h3{font-family:var(--sans);font-weight:600;font-size:0.95rem;color:var(--ink);ma
       </div>
       <div style="margin-bottom:24px">
         <div style="display:flex;justify-content:space-between"><strong>Maribank</strong><span class="amt" style="font-family:var(--mono);color:var(--teal)">untouchable</span></div>
-        <div class="note">savings only, no withdrawals</div>
+        <div class="note">savings only, no withdrawals. the renovation money lives here.</div>
       </div>
 
-      <h3>renovation savings goal</h3>
-      <p class="note">₱219k - ₱489k for 2nd floor extension</p>
-      <div class="bar"><div class="bar-fill" style="width:8%"></div></div>
-      <div style="display:flex;justify-content:space-between;margin-top:6px;font-family:var(--mono);font-size:0.75rem;color:var(--ink-mute)"><span>~₱18,000 saved</span><span>~₱219,000 goal</span></div>
+      <h3>the rule</h3>
+      <p style="color:var(--ink-dim);line-height:1.7;font-size:0.92rem">payday lands, the savings transfer goes out <em>first</em>. before groceries, before gas, before anything optional. what's left in GoTyme is the real budget.</p>
+      <div style="margin-top:14px"><span class="chip teal">pay yourself first</span><span class="chip ember">₱219k target</span></div>
+
+      <h3 style="margin-top:22px">stretch goal</h3>
+      <p class="note">full build runs up to ₱489,000. hit the ₱219k floor first, then decide.</p>
+      <div class="bar"><div class="bar-fill" id="stretch-bar" style="width:4%"></div></div>
+      <div style="display:flex;justify-content:space-between;margin-top:6px;font-family:var(--mono);font-size:0.72rem;color:var(--ink-mute)"><span id="stretch-label">—</span><span>₱489,000</span></div>
     </div>
   </div>
 </section>
@@ -3484,6 +3663,163 @@ function toggleCollapsible(id){
     }
   });
 })();
+// ---- renovation savings ----
+(function(){
+  const GOAL = 219000, STRETCH = 489000, INCOME = 120000, BASE_FIXED = 61411;
+  const SAV_KEY = 'karen-savings';
+  const $ = id => document.getElementById(id);
+  if(!$('sav-saved')) return;
+
+  const peso = n => '₱' + Math.round(n).toLocaleString('en-US');
+  const short = n => n >= 1000 ? (n/1000).toFixed(n % 1000 === 0 ? 0 : 1) + 'K' : String(Math.round(n));
+  const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+  function load(){
+    let s = {};
+    try { s = JSON.parse(localStorage.getItem(SAV_KEY) || '{}'); } catch(e){ s = {}; }
+    return {
+      saved: Number.isFinite(+s.saved) && s.saved !== null && s.saved !== undefined ? Math.max(0, +s.saved) : 18000,
+      monthly: Number.isFinite(+s.monthly) && s.monthly ? Math.max(0, +s.monthly) : 15000
+    };
+  }
+  function save(st){ localStorage.setItem(SAV_KEY, JSON.stringify(st)); }
+
+  let state = load();
+
+  function project(monthly, remaining){
+    if(remaining <= 0) return {months:0, weeks:0, date:new Date()};
+    if(!monthly || monthly <= 0) return {months:Infinity, weeks:Infinity, date:null};
+    const months = Math.ceil(remaining / monthly);
+    const weekly = monthly * 12 / 52;
+    const weeks = Math.ceil(remaining / weekly);
+    const d = new Date();
+    d.setDate(1);
+    d.setMonth(d.getMonth() + months);
+    return {months, weeks, date:d};
+  }
+  const fmtDate = d => d ? MON[d.getMonth()] + ' ' + d.getFullYear() : 'never';
+
+  const SCENARIOS = [8000, 12000, 15000, 20000];
+
+  function render(){
+    const saved = state.saved, monthly = state.monthly;
+    const remaining = Math.max(0, GOAL - saved);
+    const pct = Math.min(100, saved / GOAL * 100);
+    const p = project(monthly, remaining);
+    const weekly = monthly * 12 / 52;
+    const daily = monthly * 12 / 365;
+
+    // hero
+    $('sav-saved').textContent = peso(saved);
+    $('sav-pct').textContent = pct.toFixed(pct >= 10 ? 0 : 1) + '%';
+    $('rail-fill').style.width = Math.max(pct, saved > 0 ? 1.5 : 0) + '%';
+    $('sav-milestone').textContent =
+      pct >= 100 ? 'fully funded' :
+      pct >= 75 ? 'three quarters in' :
+      pct >= 50 ? 'past halfway' :
+      pct >= 25 ? 'a quarter there' : 'building the base';
+    ['25','50','75','100'].forEach(t => {
+      const el = $('tk-' + t);
+      if(el) el.classList.toggle('hit', pct >= +t);
+    });
+
+    // the ask
+    const askEl = $('sav-ask');
+    if(remaining <= 0){
+      askEl.innerHTML = 'funded. the whole ₱219,000 is sitting in Maribank. <span class="tiny">go build the second floor</span>';
+    } else if(!monthly){
+      askEl.innerHTML = 'set a monthly commitment and this turns into a date instead of a wish. <span class="tiny">waiting on a number</span>';
+    } else {
+      const over = monthly > (INCOME - BASE_FIXED);
+      askEl.innerHTML = 'put away <b>' + peso(weekly) + ' a week</b> for <b>' + p.weeks + ' weeks</b> and the second floor is paid for.' +
+        '<span class="tiny">' + (over
+          ? '⚠ that is more than your free cash — you would be short ' + peso(monthly - (INCOME - BASE_FIXED)) + ' a month'
+          : 'about ' + peso(daily) + ' a day · ' + peso(monthly) + ' a month') + '</span>';
+    }
+
+    // stats
+    $('st-remaining').textContent = peso(remaining);
+    $('st-weekly').textContent = peso(weekly);
+    $('st-daily').textContent = peso(daily) + ' / day';
+    $('st-weeks').textContent = isFinite(p.weeks) ? p.weeks : '∞';
+    $('st-months').textContent = isFinite(p.months) ? p.months + ' months' : 'no end in sight';
+    $('st-date').textContent = fmtDate(p.date);
+
+    // top cards
+    const fixed = BASE_FIXED + monthly;
+    $('fin-fixed').textContent = peso(fixed);
+    $('fin-fixed-note').textContent = monthly ? 'incl. ' + peso(monthly) + ' savings' : 'no savings committed';
+    $('fin-free').textContent = peso(INCOME - fixed);
+    $('fin-goal-pct').textContent = pct.toFixed(pct >= 10 ? 0 : 1) + '%';
+    $('fin-goal-note').textContent = peso(remaining) + ' to go';
+    const ovf = $('ov-free'); if(ovf){ ovf.textContent = peso(INCOME - fixed); $('ov-free-note').textContent = 'after fixed expenses + savings'; }
+
+    // expense list
+    $('row-savings').textContent = peso(monthly);
+    $('row-total').textContent = peso(fixed);
+
+    // stretch
+    const spct = Math.min(100, saved / STRETCH * 100);
+    $('stretch-bar').style.width = Math.max(spct, saved > 0 ? 1 : 0) + '%';
+    $('stretch-label').textContent = spct.toFixed(1) + '% of full build';
+
+    // simulator
+    const sl = $('sim-slider');
+    sl.value = Math.min(+sl.max, Math.max(+sl.min, monthly || +sl.min));
+    sl.style.setProperty('--p', ((sl.value - sl.min) / (sl.max - sl.min) * 100) + '%');
+    renderSim(+sl.value, remaining);
+
+    // scenarios
+    $('scenarios').innerHTML = SCENARIOS.map(m => {
+      const s = project(m, remaining);
+      return '<button class="scn' + (m === monthly ? ' on' : '') + '" data-set="' + m + '">' +
+        '<div class="m">' + peso(m) + ' / mo</div>' +
+        '<div class="t">' + (isFinite(s.months) ? s.months + ' mo' : '—') + '</div>' +
+        '<div class="d">done ' + fmtDate(s.date) + '</div></button>';
+    }).join('');
+    $('scenarios').querySelectorAll('.scn').forEach(b => {
+      b.addEventListener('click', () => { state.monthly = +b.dataset.set; save(state); syncInputs(); render(); });
+    });
+  }
+
+  function renderSim(m, remaining){
+    const s = project(m, remaining);
+    if(remaining <= 0){ $('sim-read').innerHTML = 'already funded.'; return; }
+    $('sim-read').innerHTML = 'At <b>' + peso(m) + '/month</b> you hit ₱219,000 by <span class="dt">' +
+      fmtDate(s.date) + '</span><br><span style="font-size:0.95rem;color:var(--ink-dim);font-family:var(--sans)">that is ' +
+      peso(m * 12 / 52) + ' a week for ' + s.weeks + ' weeks.</span>';
+  }
+
+  function syncInputs(){
+    $('in-saved').value = state.saved;
+    $('in-monthly').value = state.monthly;
+  }
+
+  $('in-saved').addEventListener('input', e => {
+    state.saved = Math.max(0, +e.target.value || 0); save(state); render();
+  });
+  $('in-monthly').addEventListener('input', e => {
+    state.monthly = Math.max(0, +e.target.value || 0); save(state); render();
+  });
+  document.querySelectorAll('.quick button').forEach(b => {
+    b.addEventListener('click', () => {
+      state.saved = Math.max(0, state.saved + (+b.dataset.add)); save(state); syncInputs(); render();
+    });
+  });
+  const sl = $('sim-slider');
+  sl.addEventListener('input', e => {
+    const v = +e.target.value;
+    e.target.style.setProperty('--p', ((v - sl.min) / (sl.max - sl.min) * 100) + '%');
+    renderSim(v, Math.max(0, GOAL - state.saved));
+  });
+  sl.addEventListener('change', e => {
+    state.monthly = +e.target.value; save(state); syncInputs(); render();
+  });
+
+  syncInputs();
+  render();
+})();
+
 </script>
 </body>
 </html>
