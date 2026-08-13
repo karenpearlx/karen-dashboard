@@ -126,7 +126,7 @@ main{padding:clamp(26px,4vw,54px) clamp(20px,4vw,56px) 90px;max-width:1180px;wid
 
 /* mobile chrome */
 .topbar{display:none}
-.tabbar{display:none}
+.tabbar{display:none;z-index:9998}
 .sheet{display:none}
 
 /* ————— section headers ————— */
@@ -386,7 +386,7 @@ h3{font-family:var(--sans);font-weight:700;font-size:0.9rem;letter-spacing:0.01e
   .sub{margin-bottom:24px}
   .grid-2,.grid-3,.grid-4{grid-template-columns:1fr}
   .tabbar{
-    display:grid;grid-template-columns:repeat(5,1fr);position:fixed;left:0;right:0;bottom:0;z-index:70;
+    display:grid;grid-template-columns:repeat(5,1fr);position:fixed;left:0;right:0;bottom:0;z-index:9990;
     background:rgba(28,25,22,0.94);backdrop-filter:blur(16px);border-top:1px solid var(--line);
     padding:7px 4px calc(7px + env(safe-area-inset-bottom));
   }
@@ -5288,7 +5288,7 @@ window.animNum = (function(){
     return [...items, ...custom];
   }
   
-  function openExpenseModal(id) {
+  window.openExpenseModal = function(id) {
     const modal = $('expense-modal');
     const isEdit = !!id;
     $('expense-modal-title').textContent = isEdit ? 'Edit Expense' : 'Add Expense';
@@ -5324,7 +5324,7 @@ window.animNum = (function(){
     modal.classList.add('open');
   }
   
-  function closeExpenseModal() {
+  window.closeExpenseModal = function() {
     $('expense-modal').classList.remove('open');
   }
   
@@ -5334,7 +5334,7 @@ window.animNum = (function(){
   }
   if($('exp-type')) $('exp-type').addEventListener('change', toggleOnetimeOpts);
   
-  function saveExpense() {
+  window.saveExpense = function() {
     const id = $('exp-id').value;
     const name = $('exp-name').value.trim();
     const amount = +$('exp-amount').value || 0;
@@ -5383,7 +5383,7 @@ window.animNum = (function(){
     buildEditor();
   }
   
-  function deleteExpense() {
+  window.deleteExpense = function() {
     const id = $('exp-id').value;
     if (!id) return;
     
