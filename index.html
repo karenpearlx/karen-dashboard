@@ -512,6 +512,31 @@ button{-webkit-tap-highlight-color:transparent}
 .due-edit.open{display:grid}
 .due-edit .de{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:0.82rem;color:var(--ink-dim)}
 .due-edit .de input{width:66px;padding:5px 8px;font-family:var(--mono);font-size:0.8rem;text-align:center}
+/* expense editor modal */
+.expense-modal{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:9999;display:none;align-items:center;justify-content:center;padding:20px}
+.expense-modal.open{display:flex}
+.expense-modal-box{background:var(--bg-2);border:1px solid var(--line);border-radius:16px;padding:24px;width:100%;max-width:400px;max-height:80vh;overflow-y:auto}
+.expense-modal h3{margin:0 0 16px;font-family:var(--serif);font-size:1.1rem}
+.expense-modal label{display:block;margin-bottom:12px;font-size:0.85rem;color:var(--ink-dim)}
+.expense-modal label span{display:block;margin-bottom:4px}
+.expense-modal input,.expense-modal select{width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--line);border-radius:8px;color:var(--ink);font-family:var(--sans);font-size:0.9rem}
+.expense-modal input:focus,.expense-modal select:focus{outline:none;border-color:var(--ember)}
+.expense-modal .row{display:flex;gap:12px}
+.expense-modal .row > *{flex:1}
+.expense-modal .actions{display:flex;gap:10px;margin-top:20px}
+.expense-modal .actions button{flex:1;padding:12px;border:none;border-radius:8px;font-family:var(--sans);font-size:0.9rem;cursor:pointer}
+.expense-modal .actions .save{background:var(--ember);color:#fff}
+.expense-modal .actions .cancel{background:var(--bg-3);color:var(--ink)}
+.expense-modal .actions .delete{background:#5a2a2a;color:#f88}
+.expense-list-edit{margin-top:12px}
+.expense-list-edit .eli{display:flex;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid var(--line-2)}
+.expense-list-edit .eli:last-child{border-bottom:none}
+.expense-list-edit .eli-name{flex:1;font-size:0.9rem}
+.expense-list-edit .eli-amt{font-family:var(--mono);font-size:0.85rem;color:var(--ink-dim)}
+.expense-list-edit .eli-edit{padding:6px 10px;background:var(--bg-3);border:none;border-radius:6px;color:var(--ink);font-size:0.75rem;cursor:pointer}
+.add-expense-btn{display:block;width:100%;padding:12px;margin-top:12px;background:var(--bg-3);border:1px dashed var(--line);border-radius:8px;color:var(--ink-mute);font-family:var(--sans);font-size:0.85rem;cursor:pointer;text-align:center}
+.add-expense-btn:hover{border-color:var(--ember);color:var(--ember)}
+
 .due-flag{margin-top:12px;font-size:0.76rem;color:var(--ink-mute)}
 .due-flag b{color:var(--ember);font-weight:500}
 
@@ -5243,6 +5268,135 @@ window.animNum = (function(){
   let edits = readJSON(EDIT_KEY, {});
   let paid  = readJSON(PAID_KEY, {});
   let pay   = Object.assign({mode:'biweekly', next:'', income:130000}, readJSON(PAY_KEY, {}));
+  /* ---------- custom expenses ---------- */
+  const CUSTOM_KEY = 'karen-custom-expenses';
+  let customExpenses = readJSON(CUSTOM_KEY, []);
+  
+  function allExpenses() {
+    // Merge ITEMS with custom expenses, applying edits
+    const items = ITEMS.map(it => ({
+      ...it,
+      name: (edits[it.id] && edits[it.id].name) || it.name,
+      amount: amountOf(it),
+      day: dayOf(it),
+      custom: false
+    }));
+    const custom = customExpenses.map(c => ({
+      ...c,
+      custom: true
+    }));
+    return [...items, ...custom];
+  }
+  
+  function openExpenseModal(id) {
+    const modal = $('expense-modal');
+    const isEdit = !!id;
+    $('expense-modal-title').textContent = isEdit ? 'Edit Expense' : 'Add Expense';
+    $('exp-delete').style.display = isEdit ? 'block' : 'none';
+    
+    if (isEdit) {
+      const item = ITEMS.find(i => i.id === id);
+      const custom = customExpenses.find(c => c.id === id);
+      const exp = custom || item;
+      if (!exp) return;
+      
+      $('exp-id').value = id;
+      $('exp-name').value = (edits[id] && edits[id].name) || exp.name;
+      $('exp-amount').value = custom ? exp.amount : amountOf(exp);
+      $('exp-day').value = custom ? (exp.day || '') : (exp.spread ? '' : dayOf(exp));
+      $('exp-type').value = exp.onetime ? 'onetime' : (exp.spread ? 'spread' : 'recurring');
+      $('exp-note').value = exp.note || '';
+      $('exp-onetime-date').value = exp.onetimeDate || '';
+      
+      // Can only delete custom expenses
+      $('exp-delete').style.display = custom ? 'block' : 'none';
+    } else {
+      $('exp-id').value = '';
+      $('exp-name').value = '';
+      $('exp-amount').value = '';
+      $('exp-day').value = '';
+      $('exp-type').value = 'recurring';
+      $('exp-note').value = '';
+      $('exp-onetime-date').value = '';
+    }
+    
+    toggleOnetimeOpts();
+    modal.classList.add('open');
+  }
+  
+  function closeExpenseModal() {
+    $('expense-modal').classList.remove('open');
+  }
+  
+  function toggleOnetimeOpts() {
+    $('exp-onetime-opts').style.display = $('exp-type').value === 'onetime' ? 'block' : 'none';
+    $('exp-day').closest('label').style.display = $('exp-type').value === 'spread' ? 'none' : 'block';
+  }
+  if($('exp-type')) $('exp-type').addEventListener('change', toggleOnetimeOpts);
+  
+  function saveExpense() {
+    const id = $('exp-id').value;
+    const name = $('exp-name').value.trim();
+    const amount = +$('exp-amount').value || 0;
+    const day = +$('exp-day').value || null;
+    const type = $('exp-type').value;
+    const note = $('exp-note').value.trim();
+    const onetimeDate = $('exp-onetime-date').value;
+    
+    if (!name || amount <= 0) {
+      alert('Please enter a name and amount');
+      return;
+    }
+    
+    if (id && ITEMS.find(i => i.id === id)) {
+      // Editing a built-in item - save to edits
+      edits[id] = edits[id] || {};
+      edits[id].name = name;
+      edits[id].amount = amount;
+      if (day) edits[id].day = day;
+      writeJSON(EDIT_KEY, edits);
+    } else {
+      // Custom expense
+      const newId = id || 'custom-' + Date.now();
+      const exp = {
+        id: newId,
+        name,
+        amount,
+        day: type === 'spread' ? null : day,
+        spread: type === 'spread',
+        onetime: type === 'onetime',
+        onetimeDate: type === 'onetime' ? onetimeDate : null,
+        note: note || null
+      };
+      
+      const idx = customExpenses.findIndex(c => c.id === id);
+      if (idx >= 0) {
+        customExpenses[idx] = exp;
+      } else {
+        customExpenses.push(exp);
+      }
+      writeJSON(CUSTOM_KEY, customExpenses);
+    }
+    
+    closeExpenseModal();
+    renderAll();
+    buildEditor();
+  }
+  
+  function deleteExpense() {
+    const id = $('exp-id').value;
+    if (!id) return;
+    
+    const idx = customExpenses.findIndex(c => c.id === id);
+    if (idx >= 0) {
+      customExpenses.splice(idx, 1);
+      writeJSON(CUSTOM_KEY, customExpenses);
+      closeExpenseModal();
+      renderAll();
+      buildEditor();
+    }
+  }
+
 
   // migrate the older day-only store
   const legacy = readJSON(LEGACY_DAYS, null);
@@ -5444,21 +5598,17 @@ window.animNum = (function(){
     $('due-edit-toggle').textContent = 'done editing';
   }
   function buildEditor(){
-    $('due-edit').innerHTML = ITEMS.map(it =>
-      '<label class="de"><span>' + it.name + (isDead(it) ? ' <span style="color:var(--ink-mute)">(done)</span>' : '') + '</span>' +
-      '<span style="display:flex;gap:6px">' +
-        (it.save ? '<span style="font-family:var(--mono);font-size:0.72rem;color:var(--ink-mute);align-self:center">set above</span>'
-                 : '<input type="number" min="0" step="50" data-amt="' + it.id + '" value="' + amountOf(it) + '" style="width:88px" aria-label="' + it.name + ' amount">') +
-        (it.spread ? '<span style="font-family:var(--mono);font-size:0.72rem;color:var(--ink-mute);align-self:center;width:66px;text-align:center">spread</span>'
-                   : '<input type="number" min="1" max="31" data-day="' + it.id + '" value="' + dayOf(it) + '" aria-label="' + it.name + ' due day">') +
-      '</span></label>').join('');
-    $('due-edit').querySelectorAll('input').forEach(inp => inp.addEventListener('input', () => {
-      const id = inp.dataset.day || inp.dataset.amt;
-      edits[id] = edits[id] || {};
-      if(inp.dataset.day) edits[id].day = Math.min(31, Math.max(1, +inp.value || 1));
-      else edits[id].amount = Math.max(0, +inp.value || 0);
-      writeJSON(EDIT_KEY, edits); renderAll();
-    }));
+    const nameOf = it => (edits[it.id] && edits[it.id].name) || it.name;
+    const all = [...ITEMS, ...customExpenses];
+    let h = '<div class="expense-list-edit">' + all.map(it =>
+      '<div class="eli">' +
+        '<span class="eli-name">' + nameOf(it) + (it.note ? ' <small style="color:var(--ink-mute)">' + it.note + '</small>' : '') + '</span>' +
+        '<span class="eli-amt">' + peso(it.amount || amountOf(it)) + '</span>' +
+        '<button class="eli-edit" onclick="openExpenseModal(\'' + it.id + '\')">edit</button>' +
+      '</div>').join('') + '</div>' +
+    '<button class="add-expense-btn" onclick="openExpenseModal()">+ Add expense</button>';
+    $('due-edit').innerHTML = h;
+    
   }
 
   /* ---------- payday analyzer ---------- */
@@ -5498,7 +5648,7 @@ window.animNum = (function(){
           ' <span style="color:var(--ink-mute);font-size:0.85rem">→ ' + nice(new Date(b - 86400000)) + '</span></div>' +
           '<div class="badge">' + (isNow ? 'this paycheck · in ' + Math.max(0, dayDiff(a, today)) + ' days' : 'paycheck ' + (i+1)) + '</div></div>' +
         '<div class="period-body">' +
-          lines.map(l => '<div class="pl' + (l.overdue ? ' overdue' : '') + '"><span class="nm">' + l.name +
+          lines.map(l => '<div class="pl' + (l.overdue ? ' overdue' : '') + '"><span class="nm">' + ((edits[l.id] && edits[l.id].name) || l.name) +
             '<small>' + (l.overdue ? 'OVERDUE · ' + l.tagged : l.tagged) + '</small></span><span class="leader"></span>' +
             '<span class="amt">' + peso(l.amount) + '</span></div>').join('') +
           '<div class="pl"><span class="nm">Day-to-day<small>food, gas, grocery, buffers</small></span><span class="leader"></span>' +
@@ -6097,5 +6247,34 @@ function toggleCollapsible(id){
   window.__savingsRefresh = () => { state = load(); syncInputs(); render(); };
 })();
 </script>
+
+<!-- expense editor modal -->
+<div class="expense-modal" id="expense-modal">
+  <div class="expense-modal-box">
+    <h3 id="expense-modal-title">Add Expense</h3>
+    <input type="hidden" id="exp-id">
+    <label><span>Name</span><input type="text" id="exp-name" placeholder="e.g. Netflix"></label>
+    <div class="row">
+      <label><span>Amount ₱</span><input type="number" id="exp-amount" min="0" step="50" placeholder="500"></label>
+      <label><span>Due day</span><input type="number" id="exp-day" min="1" max="31" placeholder="15"></label>
+    </div>
+    <label><span>Type</span>
+      <select id="exp-type">
+        <option value="recurring">Recurring (every month)</option>
+        <option value="spread">Spread across paychecks</option>
+        <option value="onetime">One-time expense</option>
+      </select>
+    </label>
+    <div id="exp-onetime-opts" style="display:none">
+      <label><span>For which paycheck?</span><input type="date" id="exp-onetime-date"></label>
+    </div>
+    <label><span>Note (optional)</span><input type="text" id="exp-note" placeholder="e.g. ends Dec 2026"></label>
+    <div class="actions">
+      <button class="cancel" onclick="closeExpenseModal()">Cancel</button>
+      <button class="delete" id="exp-delete" style="display:none" onclick="deleteExpense()">Delete</button>
+      <button class="save" onclick="saveExpense()">Save</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
