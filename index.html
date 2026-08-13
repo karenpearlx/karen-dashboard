@@ -75,7 +75,7 @@ input[type=number]{-moz-appearance:textfield}
 input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
 
 /* ————— shell ————— */
-.app{display:grid;grid-template-columns:246px 1fr;min-height:100vh}
+.app{display:grid;grid-template-columns:246px minmax(0,1fr);min-height:100vh}
 aside{
   border-right:1px solid var(--line);padding:30px 18px 24px;
   position:sticky;top:0;height:100vh;overflow-y:auto;
@@ -119,7 +119,7 @@ nav button.nav-btn.active::before{
 .aside-foot{margin-top:26px;padding-top:16px;border-top:1px solid var(--line);
   font-family:var(--mono);font-size:0.62rem;color:var(--ink-mute);letter-spacing:0.1em;line-height:1.9}
 
-main{padding:clamp(26px,4vw,54px) clamp(20px,4vw,56px) 90px;max-width:1180px;width:100%}
+main{padding:clamp(26px,4vw,54px) clamp(20px,4vw,56px) 90px;max-width:1180px;width:100%;min-width:0}
 .section{display:none}
 .section.active{display:block;animation:rise .45s cubic-bezier(.22,1,.36,1)}
 @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
