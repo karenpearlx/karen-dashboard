@@ -5310,6 +5310,7 @@ window.animNum = (function(){
       $('exp-type').value = exp.onetime ? 'onetime' : (exp.spread ? 'spread' : 'recurring');
       $('exp-note').value = exp.note || '';
       $('exp-onetime-date').value = exp.onetimeDate || '';
+      $('exp-start-date').value = exp.startDate || '';
       
       // Can only delete custom expenses
       $('exp-delete').style.display = custom ? 'block' : 'none';
@@ -5321,6 +5322,7 @@ window.animNum = (function(){
       $('exp-type').value = 'recurring';
       $('exp-note').value = '';
       $('exp-onetime-date').value = '';
+      $('exp-start-date').value = '';
     }
     
     toggleOnetimeOpts();
@@ -5338,6 +5340,7 @@ window.animNum = (function(){
     $('exp-type').value = 'onetime';
     $('exp-note').value = '';
     $('exp-onetime-date').value = dateStr;
+    $('exp-start-date').value = dateStr;
     toggleOnetimeOpts();
     modal.classList.add('open');
   }
@@ -5347,8 +5350,10 @@ window.animNum = (function(){
   }
   
   function toggleOnetimeOpts() {
-    $('exp-onetime-opts').style.display = $('exp-type').value === 'onetime' ? 'block' : 'none';
-    $('exp-day').closest('label').style.display = $('exp-type').value === 'spread' ? 'none' : 'block';
+    const type = $('exp-type').value;
+    $('exp-onetime-opts').style.display = type === 'onetime' ? 'block' : 'none';
+    $('exp-recurring-opts').style.display = type === 'recurring' ? 'block' : 'none';
+    $('exp-day').closest('label').style.display = type === 'spread' ? 'none' : 'block';
   }
   if($('exp-type')) $('exp-type').addEventListener('change', toggleOnetimeOpts);
   
@@ -5360,6 +5365,7 @@ window.animNum = (function(){
     const type = $('exp-type').value;
     const note = $('exp-note').value.trim();
     const onetimeDate = $('exp-onetime-date').value;
+    const startDate = $('exp-start-date').value;
     
     if (!name || amount <= 0) {
       alert('Please enter a name and amount');
@@ -5384,6 +5390,7 @@ window.animNum = (function(){
         spread: type === 'spread',
         onetime: type === 'onetime',
         onetimeDate: type === 'onetime' ? onetimeDate : null,
+        startDate: type === 'recurring' ? startDate : null,
         note: note || null
       };
       
@@ -5669,8 +5676,9 @@ window.animNum = (function(){
           lines.map(l => '<div class="pl' + (l.overdue ? ' overdue' : '') + '"><span class="nm">' + ((edits[l.id] && edits[l.id].name) || l.name) +
             '<small>' + (l.overdue ? 'OVERDUE · ' + l.tagged : l.tagged) + '</small></span><span class="leader"></span>' +
             '<span class="amt">' + peso(l.amount) + '</span></div>').join('') +
-          '<div class="pl"><span class="nm">Day-to-day<small>food, gas, grocery, buffers</small></span><span class="leader"></span>' +
-            '<span class="amt">' + peso(spreadTotal) + '</span></div>' +
+          spread.map(it => '<div class="pl spread-item"><span class="nm">' + ((edits[it.id] && edits[it.id].name) || it.name) +
+            '<small>spread</small></span><span class="leader"></span>' +
+            '<span class="amt">' + peso(amountOf(it) * 12 / perYear()) + '</span></div>').join('') +
           '<div class="math">' +
             '<div><div class="k">Comes in</div><div class="v in">' + peso(income) + '</div></div>' +
             '<div><div class="k">Goes out</div><div class="v out">' + peso(out) + '</div></div>' +
@@ -6286,6 +6294,9 @@ function toggleCollapsible(id){
     </label>
     <div id="exp-onetime-opts" style="display:none">
       <label><span>For which paycheck?</span><input type="date" id="exp-onetime-date"></label>
+    </div>
+    <div id="exp-recurring-opts" style="display:none">
+      <label><span>Starts from (optional)</span><input type="date" id="exp-start-date" placeholder="leave blank for existing"></label>
     </div>
     <label><span>Note (optional)</span><input type="text" id="exp-note" placeholder="e.g. ends Dec 2026"></label>
     <div class="actions">
