@@ -321,7 +321,13 @@ h3{font-family:var(--sans);font-weight:700;font-size:0.9rem;letter-spacing:0.01e
 .pay-head{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end;justify-content:space-between;margin-bottom:20px}
 .pay-in{display:flex;gap:12px;flex-wrap:wrap}
 .pay-in .field{min-width:132px}
-.period{margin-top:18px;border:1px solid var(--line);border-radius:12px;background:var(--bg);overflow:hidden}
+.period{margin-top:18px;border:1px solid var(--line);border-radius:12px;background:var(--bg);overflow:hidden;position:relative}
+
+.period-top{cursor:pointer;user-select:none}
+.period-top::after{content:'▾';position:absolute;right:16px;top:50%;transform:translateY(-50%);color:var(--ink-mute);font-size:0.8rem;transition:transform .2s}
+.period.collapsed .period-top::after{transform:translateY(-50%) rotate(-90deg)}
+.period.collapsed .period-body{display:none}
+
 .period.now{border-color:#4A2E20;box-shadow:0 0 0 1px rgba(254,100,56,0.14)}
 .period-top{
   display:flex;flex-wrap:wrap;gap:10px;align-items:baseline;justify-content:space-between;
@@ -5236,7 +5242,7 @@ window.animNum = (function(){
 
   let edits = readJSON(EDIT_KEY, {});
   let paid  = readJSON(PAID_KEY, {});
-  let pay   = Object.assign({mode:'biweekly', next:'', income:120000}, readJSON(PAY_KEY, {}));
+  let pay   = Object.assign({mode:'biweekly', next:'', income:130000}, readJSON(PAY_KEY, {}));
 
   // migrate the older day-only store
   const legacy = readJSON(LEGACY_DAYS, null);
@@ -5487,7 +5493,7 @@ window.animNum = (function(){
       const left = income - out;
       const isNow = i === 0;
 
-      html += '<div class="period' + (isNow ? ' now' : '') + '">' +
+      html += '<div class="period' + (isNow ? ' now' : ' collapsed') + '" onclick="this.classList.toggle(\'collapsed\')">' +
         '<div class="period-top"><div class="when">' + (isNow ? '<em>' + nice(a) + '</em>' : nice(a)) +
           ' <span style="color:var(--ink-mute);font-size:0.85rem">→ ' + nice(new Date(b - 86400000)) + '</span></div>' +
           '<div class="badge">' + (isNow ? 'this paycheck · in ' + Math.max(0, dayDiff(a, today)) + ' days' : 'paycheck ' + (i+1)) + '</div></div>' +
@@ -5873,7 +5879,7 @@ function toggleCollapsible(id){
 })();
 // ---- renovation savings ----
 (function(){
-  const GOAL = 219000, STRETCH = 489000, INCOME = 120000, BASE_FIXED = 61411;
+  const GOAL = 219000, STRETCH = 489000, INCOME = 130000, BASE_FIXED = 61411;
   const SAV_KEY = 'karen-savings';
   const $ = id => document.getElementById(id);
   if(!$('sav-saved')) return;
