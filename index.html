@@ -369,9 +369,9 @@ h3{font-family:var(--sans);font-weight:700;font-size:0.9rem;letter-spacing:0.01e
   .qa{grid-template-columns:repeat(2,1fr)}
 }
 @media (max-width:900px){
-  .app{grid-template-columns:1fr}
+  .app{grid-template-columns:1fr;min-height:auto}
   aside{display:none}
-  main{padding:0 16px calc(96px + env(safe-area-inset-bottom));max-width:none}
+  main{padding:0 16px calc(96px + env(safe-area-inset-bottom));max-width:none;height:auto}
   .topbar{
     display:flex;align-items:center;justify-content:space-between;gap:12px;
     position:sticky;top:0;z-index:60;padding:14px 16px calc(12px + 0px);
