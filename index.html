@@ -337,6 +337,10 @@ h3{font-family:var(--sans);font-weight:700;font-size:0.9rem;letter-spacing:0.01e
 .period-top .when em{font-style:italic;color:var(--ember)}
 .period-top .badge{font-family:var(--mono);font-size:0.61rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--ink-mute)}
 .period-body{padding:14px 18px}
+
+.period-add{margin-top:12px;padding:8px 14px;background:var(--card);border:1px dashed var(--ink-mute);border-radius:6px;color:var(--ink-dim);font-family:var(--mono);font-size:0.75rem;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;width:100%;text-align:center;transition:all .15s}
+.period-add:hover{border-color:var(--ember);color:var(--ember);background:rgba(254,100,56,0.05)}
+
 .pl{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:baseline;padding:7px 0;font-size:0.89rem}
 .pl .leader{border-bottom:1px dotted var(--line-2);transform:translateY(-4px)}
 .pl .amt{font-family:var(--mono);color:var(--ink-dim);font-variant-numeric:tabular-nums}
@@ -5323,6 +5327,21 @@ window.animNum = (function(){
     modal.classList.add('open');
   }
   
+  window.openExpenseForPaycheck = function(dateStr) {
+    const modal = $('expense-modal');
+    $('expense-modal-title').textContent = 'Add Expense to Paycheck';
+    $('exp-delete').style.display = 'none';
+    $('exp-id').value = '';
+    $('exp-name').value = '';
+    $('exp-amount').value = '';
+    $('exp-day').value = '';
+    $('exp-type').value = 'onetime';
+    $('exp-note').value = '';
+    $('exp-onetime-date').value = dateStr;
+    toggleOnetimeOpts();
+    modal.classList.add('open');
+  }
+
   window.closeExpenseModal = function() {
     $('expense-modal').classList.remove('open');
   }
@@ -5661,6 +5680,7 @@ window.animNum = (function(){
             ? 'this paycheck is <b>' + peso(-left) + ' short</b>. something has to move: lower the savings transfer, push a bill to the next period, or find the money.'
             : 'from the ' + nice(a) + ' paycheck you need <b>' + peso(out) + '</b> for bills and day-to-day, leaving <b>' + peso(left) + '</b> to actually spend.') +
             '</div>' : '') +
+          '<button class="period-add" onclick="event.stopPropagation();openExpenseForPaycheck(\''+a.toISOString().slice(0,10)+'\')">+ add expense to this period</button>' +
         '</div></div>';
     }
     $('pay-periods').innerHTML = html;
