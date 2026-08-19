@@ -814,7 +814,7 @@ input[type=range].slider::-moz-range-thumb{
 }
 .fab:hover{transform:translateY(-2px) rotate(90deg)}
 .fab:active{transform:scale(.92)}
-.fab.hide{opacity:0;pointer-events:none;transform:scale(.8)}
+.fab.hide,.fab.context-hide{opacity:0;pointer-events:none;transform:scale(.8)}
 @media (max-width:900px){ #ptr{
   position:fixed;top:0;left:50%;margin-left:-19px;width:38px;height:38px;border-radius:50%;z-index:95;
   background:var(--bg-3);border:1px solid var(--line-2);color:var(--ink-dim);
@@ -6026,6 +6026,8 @@ window.animNum = (function(){
     sheetBtns.forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
     const more = document.getElementById('more-btn');
     if(more) more.classList.toggle('active', PRIMARY.indexOf(tab) === -1);
+    const fab = document.getElementById('fab');
+    if(fab) fab.classList.toggle('context-hide', tab !== 'overview' && tab !== 'finances');
     try { localStorage.setItem('karen-tab', tab); } catch(e){}
     if(scroll !== false) window.scrollTo({top:0, behavior:'smooth'});
     document.dispatchEvent(new CustomEvent('tab:changed', {detail:tab}));
