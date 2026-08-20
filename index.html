@@ -6464,11 +6464,13 @@ window.animNum = (function(){
 
   /* ---------- fixed expense list ---------- */
   function renderExpenses(){
-    const rows = ITEMS.map(it => {
+    const nameOf = it => (edits[it.id] && edits[it.id].name) || it.name;
+    const all = [...ITEMS, ...customExpenses];
+    const rows = all.map(it => {
       const dead = isDead(it), amt = amountOf(it);
       const when = it.spread ? 'spread' : ord(dayOf(it));
       return '<div class="expense-row' + (dead ? ' dead' : '') + (it.save ? ' sav-row' : '') + '">' +
-        '<span class="nm">' + it.name + (it.note ? '<span class="day">' + it.note + '</span>' : '') + '</span>' +
+        '<span class="nm">' + nameOf(it) + (it.note ? '<span class="day">' + it.note + '</span>' : '') + '</span>' +
         '<span class="leader"></span>' +
         '<span class="amt' + (it.id === 'car' ? ' bold' : '') + '">' + peso(amt) +
           '<span class="day">' + when + '</span></span>' +
@@ -6476,9 +6478,9 @@ window.animNum = (function(){
     }).join('');
     $('exp-list').innerHTML = rows;
 
-    const total = live().reduce((s,it) => s + amountOf(it), 0);
+    const total = [...live(), ...customExpenses].reduce((s,it) => s + amountOf(it), 0);
     window.animNum($('exp-total'), total, peso);
-    $('exp-count').textContent = live().length;
+    $('exp-count').textContent = live().length + customExpenses.length;
     $('exp-flag').innerHTML =
       'itemised, this comes to ₱54,561. your ₱56,561 leaves <b>₱2,000</b> unnamed — ' +
       '<button class="linkish" data-open-edit="1">name it or zero it</button>.';
