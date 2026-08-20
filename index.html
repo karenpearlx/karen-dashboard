@@ -6225,7 +6225,7 @@ window.animNum = (function(){
 
   let edits = readJSON(EDIT_KEY, {});
   let paid  = readJSON(PAID_KEY, {});
-  let pay   = Object.assign({mode:'biweekly', next:'', income:130000}, readJSON(PAY_KEY, {}));
+  let pay   = Object.assign({mode:'biweekly', next:'', income:188500}, readJSON(PAY_KEY, {}));
   /* ---------- custom expenses ---------- */
   const CUSTOM_KEY = 'karen-custom-expenses';
   let customExpenses = readJSON(CUSTOM_KEY, []);
@@ -7011,7 +7011,7 @@ function toggleCollapsible(id){
 })();
 // ---- renovation savings ----
 (function(){
-  const GOAL = 219000, STRETCH = 489000, INCOME = 130000, BASE_FIXED = 61411;
+  const GOAL = 219000, STRETCH = 489000, INCOME = 188500, BASE_FIXED = 61411;
   const SAV_KEY = 'karen-savings';
   const $ = id => document.getElementById(id);
   if(!$('sav-saved')) return;
