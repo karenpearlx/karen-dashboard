@@ -750,6 +750,7 @@ input[type=range].slider::-moz-range-thumb{
 /* ————— search ————— */
 .search{position:relative;z-index:60;margin-bottom:14px}
 .search .ico{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:var(--ink-mute);font-size:0.95rem;pointer-events:none}
+.icon-svg{display:block;width:1em;height:1em;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .search input{padding-left:40px;border-radius:13px;background:var(--bg-2);height:46px}
 .search input::placeholder{color:var(--ink-mute)}
 .results{
@@ -924,7 +925,7 @@ main{min-width:0}
   </div>
 
   <div class="search">
-    <span class="ico">⌕</span>
+    <span class="ico"><svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg></span>
     <input type="search" id="q" placeholder="search books, figures, sections…" autocomplete="off" aria-label="Search">
     <div class="results" id="q-results"></div>
   </div>
@@ -947,10 +948,10 @@ main{min-width:0}
 
   <div class="rule"><h2>quick hands</h2></div>
   <div class="qa">
-    <button data-qa="spend"><span class="ic">✎</span><span class="t">Log a spend</span></button>
+    <button data-qa="spend"><span class="ic"><svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="m4 20 4.2-1 10.4-10.4a2.1 2.1 0 0 0-3-3L5.2 16Z"/><path d="m14.5 6.7 2.8 2.8"/></svg></span><span class="t">Log a spend</span></button>
     <button data-qa="save"><span class="ic">▲</span><span class="t">Moved to savings</span></button>
-    <button data-qa="journal"><span class="ic">❞</span><span class="t">Write it down</span></button>
-    <button data-qa="bills"><span class="ic">◷</span><span class="t">Pay a bill</span></button>
+    <button data-qa="journal"><span class="ic"><svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 17h3l2-4V7H5v6h3m7 4h3l2-4V7h-6v6h3"/></svg></span><span class="t">Write it down</span></button>
+    <button data-qa="bills"><span class="ic"><svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg></span><span class="t">Pay a bill</span></button>
   </div>
   <div id="qa-panel" style="display:none;margin-top:12px">
     <div class="card" style="padding:18px">
@@ -984,7 +985,7 @@ main{min-width:0}
   <div class="rule"><h2>what's live</h2></div>
   <div class="grid grid-2">
     <div class="card" style="border-left:2px solid var(--ember)">
-      <div class="ic-badge">⌕</div><span class="badge hot">live · aug 2026</span>
+      <div class="ic-badge"><svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg></div><span class="badge hot">live · aug 2026</span>
       <h3 style="font-family:var(--serif-bold);font-weight:700;font-size:1.3rem">Alibi</h3>
       <p class="note">invite-only murder mystery game for friend groups. four cases, private progress, shared chat, and a noir evidence desk built for 2am detectives.</p>
       <p style="margin-top:10px;font-family:var(--mono);font-size:0.72rem"><a href="https://unwillingly-stunningly-excelling-octopus.kitten.space" target="_blank" rel="noopener" style="color:var(--ember)">play</a></p>
@@ -6651,7 +6652,7 @@ What if someone had the key after all
 <div class="tabbar">
   <button class="tab-btn active" data-tab="overview"><span class="ic">◐</span>Today</button>
   <button class="tab-btn" data-tab="finances"><span class="ic">₱</span>Ledger</button>
-  <button class="tab-btn" data-tab="journal"><span class="ic">❞</span>Journal</button>
+  <button class="tab-btn" data-tab="journal"><span class="ic"><svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 17h3l2-4V7H5v6h3m7 4h3l2-4V7h-6v6h3"/></svg></span>Journal</button>
   <button class="tab-btn" data-tab="books"><span class="ic">▤</span>Books</button>
   <button class="tab-btn" id="more-btn"><span class="ic">⋯</span>More</button>
 </div>
